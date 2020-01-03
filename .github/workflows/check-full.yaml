@@ -32,14 +32,9 @@ jobs:
       - uses: r-lib/actions/setup-tinytex@master
         if: contains(matrix.config.args, 'no-manual') == false
 
-      - name: Install system dependencies
-        if: runner.os == 'macOS'
+      - name: Ensure that tex has all the correct packages
+        if: contains(matrix.config.args, 'no-manual') == false
         run: |
-          brew install libarchive
-          source <(curl -s http://mirror.ctan.org/systems/texlive/tlnet/update-tlmgr-latest.sh)
-          tlmgr install pdftexcmds
-          tlmgr install kvoptions
-          tlmgr install letltxmacro
           tlmgr install gettitlestring
 
       - name: Install system dependencies
