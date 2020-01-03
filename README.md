@@ -8,12 +8,6 @@ state and is being actively
 developed.](https://www.repostatus.org/badges/latest/active.svg)](https://www.repostatus.org/#active)
 [![Lifecycle:
 maturing](https://img.shields.io/badge/lifecycle-maturing-blue.svg)](https://www.tidyverse.org/lifecycle/#maturing)
-[![Travis-CI Build
-Status](https://travis-ci.org/pachamaltese/binet.svg?branch=master)](https://travis-ci.org/pachamaltese/binet)
-[![Coverage
-status](https://codecov.io/gh/pachamaltese/binet/branch/master/graph/badge.svg)](https://codecov.io/github/pachamaltese/binet?branch=master)
-[![CRAN
-status](https://www.r-pkg.org/badges/version/binet)](https://cran.r-project.org/package=binet)
 
 A consistent tool to explore bipartite relations. These methods are
 useful for different kind of relations such as The Product Space

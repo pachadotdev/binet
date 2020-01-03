@@ -9,28 +9,6 @@ Authors@R: c(
       email = "mvargas@dcc.uchile.cl",
       comment = c(ORCID = "0000-0003-1017-7574")
     ),
-    person(given = "Carlo",
-      family = "Bottai",
-      role = "ctb",
-      comment = "improved the eigenvalues calculation"
-    ),
-    person(given = "Diego",
-      family = "Kozlowski",
-      role = "ctb",
-      comment = "provided initial RCA and proximity functions he used for his 
-      thesis"
-    ),
-    person(given = "Mark",
-      family = "Padgham",
-      role = "rev",
-      comment = "compared PRODY equations from different articles"
-    ),
-    person(given = "Nico",
-      family = "Pintar",
-      role = "rev",
-      comment = "suggested improvements to special cases in eigenvalues 
-      calculation"
-    ),
     person(family = "Open Trade Statistics",
       role = "dtc")
   )
