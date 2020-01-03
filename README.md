@@ -3,6 +3,10 @@
 
 # Binet <img src="https://pachamaltese.github.io/binet/hexicon.svg" width=150 align="right" alt="sticker"/>
 
+[![R build
+status](https://github.com/pachamaltese/binet/workflows/R-CMD-check/badge.svg)](https://github.com/pachamaltese/binet/actions?workflow=R-CMD-check)
+[![Codecov test
+coverage](https://codecov.io/gh/pachamaltese/binet/branch/master/graph/badge.svg)](https://codecov.io/gh/pachamaltese/binet?branch=master)
 [![Project Status: Active – The project has reached a stable, usable
 state and is being actively
 developed.](https://www.repostatus.org/badges/latest/active.svg)](https://www.repostatus.org/#active)
@@ -15,9 +19,9 @@ useful for different kind of relations such as The Product Space
 <doi:10.1073/pnas.0701361104>.
 
 The functions within this package correspond to code implementations of
-the equations described in Mariani, et al. (2015)
-<doi:10.1140/epjb/e2015-60298-7>, Hausmann, et al. (2014)
-<doi:10.7551/mitpress/9647.001.0001>, and Hausmann, et al. (2005)
+the equations described in Mariani, et al. (2015)
+<doi:10.1140/epjb/e2015-60298-7>, Hausmann, et al. (2014)
+<doi:10.7551/mitpress/9647.001.0001>, and Hausmann, et al. (2005)
 <doi:10.3386/w11905>.
 
 ## Installation

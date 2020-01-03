@@ -124,7 +124,8 @@ projections <- function(px = NULL,
     while(avg_links_n == FALSE) {
       if (threshold < -1) {
         message("no threshold achieves the avg number of connections for X projection, returning maximum spanning tree")
-        xg <- igraph::graph_from_data_frame(x_mst, directed = FALSE)
+        xg <- dplyr::mutate(x_mst, value = -1 * !!sym(v))
+        xg <- igraph::graph_from_data_frame(xg, directed = FALSE)
         avg_links_n <- TRUE
       } else {
         message(sprintf("%s threshold...", -1 * threshold))
@@ -197,7 +198,8 @@ projections <- function(px = NULL,
     while(avg_links_n == FALSE) {
       if (threshold < -1) {
         message("no threshold achieves the avg number of connections for Y projection, returning maximum spanning tree")
-        yg <- igraph::graph_from_data_frame(y_mst, directed = FALSE)
+        yg <- dplyr::mutate(y_mst, value = -1 * !!sym(v))
+        yg <- igraph::graph_from_data_frame(yg, directed = FALSE)
         avg_links_n <- TRUE
       } else {
         message(sprintf("%s threshold...", -1 * threshold))
