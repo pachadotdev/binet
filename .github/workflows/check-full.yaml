@@ -41,10 +41,11 @@ jobs:
           tlmgr install kvoptions
           tlmgr install letltxmacro
 
-      - name: Test coverage
-        if: matrix.config.os == 'ubuntu-18.04'
+      - name: Install system dependencies
+        if: runner.os == 'Linux'
         run: |
-          apt intall glpk-utils
+          sudo apt-get update -y
+          sudo apt-get install -y libglpk-dev
 
       - name: Cache R packages
         uses: actions/cache@v1
