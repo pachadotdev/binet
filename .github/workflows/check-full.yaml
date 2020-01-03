@@ -40,6 +40,7 @@ jobs:
           tlmgr install pdftexcmds
           tlmgr install kvoptions
           tlmgr install letltxmacro
+          tlmgr install gettitlestring
 
       - name: Install system dependencies
         if: runner.os == 'Linux'
