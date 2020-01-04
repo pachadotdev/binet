@@ -6,7 +6,7 @@
 \usage{
 projections(px = NULL, py = NULL, f = "from", t = "to",
   v = "value", ax = 4, ay = 4, tol = 0.01, tbl = TRUE,
-  compute = "both")
+  pro = "both")
 }
 \arguments{
 \item{px}{tibble/data.frame or sparse/dense matrix containing proximity
@@ -37,8 +37,8 @@ obtaining the desired average number of connections (default set to 0.01)}
 \item{tbl}{when set to TRUE the output will be a tibble instead of a
 graph (set to TRUE by default)}
 
-\item{compute}{set to "both" by default, it can also be "x" or "y" to
-obtain one projection of the bipartite network}
+\item{pro}{set to compute "both" projections by default, it can also be
+"x" or "y" to obtain one projection of the bipartite network}
 }
 \description{
 Projections of a bipartite network

@@ -25,8 +25,8 @@
 #' a ubiquity metric for the elements of set Y in u (default set to "value")
 #' @param tbl when set to TRUE, the output will be a tibble instead of a
 #' matrix (default set to TRUE)
-#' @param compute set to "both" by default, it can also be "x" or "y" to
-#' obtain one matrix from the bipartite relation
+#' @param mat set to compute "both" matrices by default, it can also be
+#' "x" or "y" to obtain only one matrix from the bipartite relation
 #'
 #' @importFrom magrittr %>%
 #' @importFrom dplyr select filter mutate pull
@@ -68,14 +68,14 @@ proximity <- function(bi = NULL,
                       uy = NULL,
                       uv = "value",
                       tbl = TRUE,
-                      compute = "both") {
+                      mat = "both") {
   # sanity checks ----
   if (all(class(bi) %in% c("data.frame", "matrix", "dgeMatrix", "dsCMatrix",
                                "dgCMatrix") == FALSE)) {
     stop("bi must be a tibble/data.frame or a dense/sparse matrix")
   }
 
-  if (all(class(d) %in% c("numeric", "data.frame") == FALSE) &
+  if (all(class(d) %in% c("numeric", "data.frame") == FALSE) |
     all(class(u) %in% c("numeric", "data.frame") == FALSE)) {
     stop("d and u must be numeric or tibble/data.frame")
   }
@@ -84,8 +84,8 @@ proximity <- function(bi = NULL,
     stop("tbl must be logical")
   }
 
-  if (!any(compute %in% c("both", "x", "y"))) {
-    stop("compute must be both, x or y")
+  if (!any(mat %in% c("both", "x", "y"))) {
+    stop("matrices must be both, x or y")
   }
 
   # transformations if bi, d or u are data frames ----
@@ -136,10 +136,10 @@ proximity <- function(bi = NULL,
 
   # compute proximity matrices ----
 
-  if (compute == "both") {
-    compute2 <- c("country", "product")
+  if (mat == "both") {
+    mat2 <- c("x", "y")
   } else {
-    compute2 <- compute
+    mat2 <- mat
   }
 
   if (!is.null(d)) {
@@ -150,7 +150,7 @@ proximity <- function(bi = NULL,
     bi <- bi[, colnames(bi) %in% names(u)]
   }
 
-  if (any("country" %in% compute2) == TRUE) {
+  if (any("x" %in% mat2) == TRUE) {
     x1 <- bi %*% Matrix::t(bi)
 
     x2 <- outer(d, d, pmax)
@@ -172,7 +172,7 @@ proximity <- function(bi = NULL,
     prox_x <- NULL
   }
 
-  if (any("product" %in% compute2) == TRUE) {
+  if (any("y" %in% mat2) == TRUE) {
     p1 <- Matrix::t(bi) %*% bi
 
     p2 <- outer(u, u, pmax)

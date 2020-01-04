@@ -9,10 +9,11 @@
 #' tibble/data.frame)
 #' @param v column with a metric of the relation between the elements of th
 #' sets X and Y (applies only if d is a tibble/data.frame)
-#' @param discrete when set to TRUE, all the Balassa Index values below
-#' the cutoff are converted to zero and zero otherwise (default set to TRUE)
-#' @param cutoff reference value used for discretization (default set
+#' @param cut cutoff value used for discretization (default set
 #' to 1)
+#' @param dis when set to TRUE, all the Balassa Index values are converted
+#' to discrete values, anything below the cutoff is converted to 0 and 1
+#' otherwise (default set to TRUE)
 #' @param tbl when set to TRUE, the output will be a tibble instead of a
 #' matrix (default set to TRUE)
 #'
@@ -41,8 +42,8 @@ balassa_index <- function(d = NULL,
                           x = NULL,
                           y = NULL,
                           v = NULL,
-                          cutoff = 1,
-                          discrete = TRUE,
+                          cut = 1,
+                          dis = TRUE,
                           tbl = TRUE) {
   # sanity checks ----
   if (all(class(d) %in% c("data.frame", "matrix", "dgeMatrix", "dsCMatrix",
@@ -50,15 +51,15 @@ balassa_index <- function(d = NULL,
     stop("d must be a tibble/data.frame or a dense/sparse matrix")
   }
 
-  if (!is.character(x) & !is.character(y) & !is.character(v)) {
+  if (!is.character(x) | !is.character(y) | !is.character(v)) {
     stop("x, y and v must be character")
   }
 
-  if (!is.logical(discrete)) {
+  if (!is.logical(dis)) {
     stop("discrete must be TRUE or FALSE")
   }
 
-  if (!is.numeric(cutoff)) {
+  if (!is.numeric(cut)) {
     stop("cutoff must be numeric")
   }
 
@@ -110,9 +111,9 @@ balassa_index <- function(d = NULL,
     # Rename columns
     dplyr::rename(x = !!sym(x), y = !!sym(y))
 
-  if (discrete == TRUE) {
+  if (dis == TRUE) {
     d <- d %>%
-      dplyr::mutate(!!sym("v") := dplyr::if_else(!!sym("v") > cutoff, 1, 0))
+      dplyr::mutate(!!sym("v") := dplyr::if_else(!!sym("v") > cut, 1, 0))
   }
 
   if (tbl == FALSE) {

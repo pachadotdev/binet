@@ -6,7 +6,7 @@
 \usage{
 proximity(bi = NULL, x = "x", y = "y", v = "v", d = NULL,
   dx = NULL, dv = "value", u = NULL, uy = NULL, uv = "value",
-  tbl = TRUE, compute = "both")
+  tbl = TRUE, mat = "both")
 }
 \arguments{
 \item{bi}{A matrix or tibble/data.frame. You can pass the
@@ -43,8 +43,8 @@ a ubiquity metric for the elements of set Y in u (default set to "value")}
 \item{tbl}{when set to TRUE, the output will be a tibble instead of a
 matrix (default set to TRUE)}
 
-\item{compute}{set to "both" by default, it can also be "x" or "y" to
-obtain one matrix from the bipartite relation}
+\item{mat}{set to compute "both" matrices by default, it can also be
+"x" or "y" to obtain only one matrix from the bipartite relation}
 }
 \description{
 Proximity

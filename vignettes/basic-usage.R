@@ -34,7 +34,7 @@ bi_dec <- balassa_index(
   x = "country",
   y = "product",
   v = "value",
-  discrete = F
+  dis = F
 )
 
 bi_dec
@@ -46,7 +46,7 @@ bi_dec_m <- balassa_index(
   y = "product",
   v = "value",
   tbl = F,
-  discrete = F
+  dis = F
 )
 
 # 5x5 preview

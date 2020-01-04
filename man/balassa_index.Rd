@@ -4,8 +4,8 @@
 \alias{balassa_index}
 \title{Balassa Index (or Revealed Comparative Advantage, RCA)}
 \usage{
-balassa_index(d = NULL, x = NULL, y = NULL, v = NULL, cutoff = 1,
-  discrete = TRUE, tbl = TRUE)
+balassa_index(d = NULL, x = NULL, y = NULL, v = NULL, cut = 1,
+  dis = TRUE, tbl = TRUE)
 }
 \arguments{
 \item{d}{tibble/data.frame in long format or a dense/sparse matrix}
@@ -19,11 +19,12 @@ tibble/data.frame)}
 \item{v}{column with a metric of the relation between the elements of th
 sets X and Y (applies only if d is a tibble/data.frame)}
 
-\item{cutoff}{reference value used for discretization (default set
+\item{cut}{cutoff value used for discretization (default set
 to 1)}
 
-\item{discrete}{when set to TRUE, all the Balassa Index values below
-the cutoff are converted to zero and zero otherwise (default set to TRUE)}
+\item{dis}{when set to TRUE, all the Balassa Index values are converted
+to discrete values, anything below the cutoff is converted to 0 and 1
+otherwise (default set to TRUE)}
 
 \item{tbl}{when set to TRUE, the output will be a tibble instead of a
 matrix (default set to TRUE)}

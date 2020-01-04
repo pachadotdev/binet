@@ -21,8 +21,8 @@
 #' obtaining the desired average number of connections (default set to 0.01)
 #' @param tbl when set to TRUE the output will be a tibble instead of a
 #' graph (set to TRUE by default)
-#' @param compute set to "both" by default, it can also be "x" or "y" to
-#' obtain one projection of the bipartite network
+#' @param pro set to compute "both" projections by default, it can also be
+#' "x" or "y" to obtain one projection of the bipartite network
 #'
 #' @importFrom magrittr %>%
 #' @importFrom dplyr as_tibble filter mutate bind_rows
@@ -59,16 +59,16 @@ projections <- function(px = NULL,
                         ay = 4,
                         tol = 0.01,
                         tbl = TRUE,
-                        compute = "both") {
+                        pro = "both") {
   # sanity checks ----
   if (all(class(px) %in% c("data.frame", "matrix", "dgeMatrix", "dgCMatrix",
-                           "dsCMatrix") == FALSE) &
+                           "dsCMatrix") == FALSE) |
     all(class(py) %in% c("data.frame", "matrix", "dgeMatrix", "dgCMatrix",
                          "dsCMatrix") == FALSE)) {
     stop("px and py must be tibble/data.frame or dense/sparse matrix")
   }
 
-  if (!is.numeric(ax) & !is.numeric(ay)) {
+  if (!is.numeric(ax) | !is.numeric(ay)) {
     stop("ax & ay must be numeric")
   }
 
@@ -76,18 +76,18 @@ projections <- function(px = NULL,
     stop("tbl must be matrix or tibble")
   }
 
-  if (!any(compute %in% c("both", "country", "product"))) {
-    stop("compute must be both, country or product")
+  if (!any(pro %in% c("both", "x", "y"))) {
+    stop("projections must be both, x or y")
   }
 
-  if (compute == "both") {
-    compute2 <- c("country", "product")
+  if (pro == "both") {
+    pro2 <- c("x", "y")
   } else {
-    compute2 <- compute
+    pro2 <- pro
   }
 
-  if (any("country" %in% compute2) == TRUE) {
-    # arrange country matrix ----
+  if (any("x" %in% pro2) == TRUE) {
+    # arrange x matrix ----
     if (any(class(px) %in% c("dgeMatrix", "dgCMatrix", "dsCMatrix") == TRUE)) {
       px <- as.matrix(px)
     }
@@ -103,7 +103,7 @@ projections <- function(px = NULL,
         dplyr::filter(!!sym(v) > 0)
     }
 
-    # compute countries network ----
+    # compute x network ----
     px <- dplyr::mutate(px,
       value = -1 * !!sym(v)
     )
@@ -122,16 +122,16 @@ projections <- function(px = NULL,
     avg_links_n <- FALSE
 
     while(avg_links_n == FALSE) {
-      if (threshold < -1) {
+      if (threshold <= -1) {
         message("no threshold achieves the avg number of connections for X projection, returning maximum spanning tree")
         xg <- dplyr::mutate(x_mst, value = -1 * !!sym(v))
         xg <- igraph::graph_from_data_frame(xg, directed = FALSE)
         avg_links_n <- TRUE
       } else {
-        message(sprintf("%s threshold...", -1 * threshold))
+        message(sprintf("%s threshold...", threshold))
 
         xg_nmst <- px %>%
-          dplyr::filter(!!sym(v) <= -1 * threshold) %>%
+          dplyr::filter(!!sym(v) <= threshold) %>%
           dplyr::anti_join(x_mst, by = c("from", "to"))
 
         xg <- dplyr::bind_rows(x_mst, xg_nmst)
@@ -144,10 +144,10 @@ projections <- function(px = NULL,
         )
 
         avg_links <- mean(igraph::degree(xg))
-        avg_links_n <- ifelse(avg_links <= 4, TRUE, FALSE)
+        avg_links_n <- ifelse(avg_links <= ax, TRUE, FALSE)
         threshold <- threshold - tol
 
-        if (avg_links_n) {
+        if (avg_links_n == TRUE) {
           message(sprintf("%s threshold achieves the avg number of connections for X projection", -1 * threshold))
         }
       }
@@ -160,8 +160,8 @@ projections <- function(px = NULL,
     xg <- NULL
   }
 
-  if (any("product" %in% compute2) == TRUE) {
-    # arrange products matrix ----
+  if (any("y" %in% pro2) == TRUE) {
+    # arrange y matrix ----
     if (any(class(py) %in% c("dgeMatrix", "dgCMatrix", "dsCMatrix") == TRUE)) {
       py <- as.matrix(py)
     }
@@ -177,7 +177,7 @@ projections <- function(px = NULL,
         dplyr::filter(!!sym(v) > 0)
     }
 
-    # compute products network ----
+    # compute y network ----
     py <- dplyr::mutate(py,
       value = -1 * !!sym(v)
     )
@@ -196,16 +196,16 @@ projections <- function(px = NULL,
     avg_links_n <- FALSE
 
     while(avg_links_n == FALSE) {
-      if (threshold < -1) {
+      if (threshold <= -1) {
         message("no threshold achieves the avg number of connections for Y projection, returning maximum spanning tree")
         yg <- dplyr::mutate(y_mst, value = -1 * !!sym(v))
         yg <- igraph::graph_from_data_frame(yg, directed = FALSE)
         avg_links_n <- TRUE
       } else {
-        message(sprintf("%s threshold...", -1 * threshold))
+        message(sprintf("%s threshold...", threshold))
 
         yg_nmst <- py %>%
-          dplyr::filter(!!sym(v) <= -1 * threshold) %>%
+          dplyr::filter(!!sym(v) <= threshold) %>%
           dplyr::anti_join(y_mst, by = c("from", "to"))
 
         yg <- dplyr::bind_rows(y_mst, yg_nmst)
@@ -218,10 +218,10 @@ projections <- function(px = NULL,
         )
 
         avg_links <- mean(igraph::degree(yg))
-        avg_links_n <- ifelse(avg_links <= 4, TRUE, FALSE)
+        avg_links_n <- ifelse(avg_links <= ay, TRUE, FALSE)
         threshold <- threshold - tol
 
-        if (avg_links_n) {
+        if (avg_links_n == TRUE) {
           message(sprintf("%s threshold achieves the avg number of connections for Y projection", -1 * threshold))
         }
       }
