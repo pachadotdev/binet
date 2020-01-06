@@ -1,32 +1,25 @@
 #' Proximity
 #'
-#' @export
+#' @description TBDs
 #'
-#' @param bi A matrix or tibble/data.frame. You can pass the
-#' output of \code{balassa_index()} here or a similar data structure.
-#' @param x string to indicate the column that contains the elements of
-#' set X (applies only if d is a tibble/data.frame)
-#' @param y string to indicate the column that contains the elements of
-#' set Y (applies only if d is a tibble/data.frame)
-#' @param v string to indicate the column that contains a metric of the
-#' relation between the elements of the sets X and Y (applies only
-#' if d is a tibble/data.frame)
-#' @param d numeric vector or tibble/data.frame containing diversity
-#' measures (e.g. diversity from \code{complexity_measures()})
-#' @param u numeric vector or tibble/data.frame containing ubiquity
-#' measures (e.g. ubiquity from \code{complexity_measures()})
-#' @param dx string to indicate the column that contains
-#' the elements of set X in d (default set to NULL)
-#' @param dv string to indicate the column that contains
-#' a diversity metric for the elements of set X in d (default set to "value")
-#' @param uy string to indicate the column that contains
-#' the elements of set Y in u (default set to NULL)
-#' @param uv string to indicate the column that contains
-#' a ubiquity metric for the elements of set Y in u (default set to "value")
-#' @param tbl when set to TRUE, the output will be a tibble instead of a
-#' matrix (default set to TRUE)
-#' @param mat set to compute "both" matrices by default, it can also be
-#' "x" or "y" to obtain only one matrix from the bipartite relation
+#' @details TBD
+#'
+#' @param balassa_index a data frame or matrix (e.g. the output from
+#' \code{balassa_index()}).
+#' @param balassa_sum_source numeric vector or tibble/data.frame containing the
+#' Balassa sum for elements of set X (e.g. \code{balassa_sum_source} from
+#' \code{complexity_measures()}).
+#' @param balassa_sum_target numeric vector or tibble/data.frame containing the
+#' Balassa sum for elements of set Y (e.g. \code{balassa_sum_target} from
+#' \code{complexity_measures()}).
+#' @param source a column with the elements of set X (applies only if data is
+#' a data frame).
+#' @param target a column with the elements of set Y (applies only if data is
+#' a data frame).
+#' @param value a column with some metric of the relation between the elements
+#' of X and Y (applies only if data is a data frame).
+#' @param compute Which projection to compute. By default is "both" (both
+#' projections) but it can also be "source" or "target".
 #'
 #' @importFrom magrittr %>%
 #' @importFrom dplyr select filter mutate pull
@@ -37,17 +30,11 @@
 #'
 #' @examples
 #' proximity(
-#'   bi = binet_output$balassa_index,
-#'   x = "country",
-#'   y = "product",
-#'   v = "value",
-#'   d = binet_output$complexity_measures$diversity,
-#'   dx = "country",
-#'   dv = "value",
-#'   u = binet_output$complexity_measures$ubiquity,
-#'   uy = "product",
-#'   uv = "value"
+#'   balassa_index = binet_output$balassa_index,
+#'   balassa_sum_source = binet_output$complexity_measures$balassa_sum_source,
+#'   balassa_sum_target = binet_output$complexity_measures$balassa_sum_target
 #' )
+#'
 #' @references
 #' For more information see:
 #'
@@ -56,148 +43,124 @@
 #' and the references therein.
 #'
 #' @keywords functions
+#'
+#' @export
 
-proximity <- function(bi = NULL,
-                      x = "x",
-                      y = "y",
-                      v = "v",
-                      d = NULL,
-                      dx = NULL,
-                      dv = "value",
-                      u = NULL,
-                      uy = NULL,
-                      uv = "value",
-                      tbl = TRUE,
-                      mat = "both") {
+proximity <- function(balassa_index, balassa_sum_source, balassa_sum_target,
+                      source = "source", target = "target", value = "value", compute = "both") {
   # sanity checks ----
-  if (all(class(bi) %in% c("data.frame", "matrix", "dgeMatrix", "dsCMatrix",
+  if (all(class(balassa_index) %in% c("data.frame", "matrix", "dgeMatrix", "dsCMatrix",
                                "dgCMatrix") == FALSE)) {
-    stop("bi must be a tibble/data.frame or a dense/sparse matrix")
+    stop("Balassa_index must be a data frame or matrix.")
   }
 
-  if (all(class(d) %in% c("numeric", "data.frame") == FALSE) |
-    all(class(u) %in% c("numeric", "data.frame") == FALSE)) {
-    stop("d and u must be numeric or tibble/data.frame")
+  if (all(class(balassa_sum_source) %in% c("numeric", "data.frame") == FALSE) |
+    all(class(balassa_sum_target) %in% c("numeric", "data.frame") == FALSE)) {
+    stop("Balassa_sum_source and u must be data frame or numeric.")
   }
 
-  if (!is.logical(tbl)) {
-    stop("tbl must be logical")
+  if (!any(compute %in% c("both", "source", "target"))) {
+    stop("Compute must be 'both', 'source' or 'target'.")
   }
 
-  if (!any(mat %in% c("both", "x", "y"))) {
-    stop("matrices must be both, x or y")
-  }
+  # transformations for data frame inputs ----
+  if (is.data.frame(balassa_index)) {
+    balassa_index <- tidyr::spread(balassa_index, !!sym(target), !!sym(value))
 
-  # transformations if bi, d or u are data frames ----
-  if (is.data.frame(bi)) {
-    bi <- tidyr::spread(bi, !!sym(y), !!sym(v))
-
-    bi_rownames <- dplyr::select(bi, !!sym(x)) %>%
+    balassa_index_rownames <- dplyr::select(balassa_index, !!sym(source)) %>%
       dplyr::pull()
 
-    bi <- dplyr::select(bi, -!!sym(x)) %>%
+    balassa_index <- dplyr::select(balassa_index, -!!sym(source)) %>%
       as.matrix()
 
-    bi[is.na(bi)] <- 0
+    balassa_index[is.na(balassa_index)] <- 0
 
-    rownames(bi) <- bi_rownames
+    rownames(balassa_index) <- balassa_index_rownames
 
-    bi <- Matrix::Matrix(bi, sparse = TRUE)
-    bi <- bi[Matrix::rowSums(bi) != 0, Matrix::colSums(bi) != 0]
+    balassa_index <- Matrix::Matrix(balassa_index, sparse = TRUE)
+    balassa_index <- balassa_index[Matrix::rowSums(balassa_index) != 0, Matrix::colSums(balassa_index) != 0]
   } else {
-    bi <- bi[Matrix::rowSums(bi) != 0, Matrix::colSums(bi) != 0]
+    balassa_index <- balassa_index[Matrix::rowSums(balassa_index) != 0, Matrix::colSums(balassa_index) != 0]
   }
 
-  if (is.data.frame(d)) {
-    dv <- dplyr::select(d, !!sym(dv)) %>%
+  if (is.data.frame(balassa_sum_source)) {
+    dv <- dplyr::select(balassa_sum_source, !!sym(value)) %>%
       dplyr::pull()
 
-    names(dv) <- dplyr::select(
-      d,
-      !!sym(dx)
-    ) %>%
+    names(dv) <- dplyr::select(balassa_sum_source, !!sym(source)) %>%
       dplyr::pull()
 
-    d <- dv
+    balassa_sum_source <- dv
+    rm(dv)
   }
 
-  if (is.data.frame(u)) {
-    uv <- dplyr::select(u, !!sym(uv)) %>%
+  if (is.data.frame(balassa_sum_target)) {
+    uv <- dplyr::select(balassa_sum_target, !!sym(value)) %>%
       dplyr::pull()
 
-    names(uv) <- dplyr::select(
-      u,
-      !!sym(uy)
-    ) %>%
+    names(uv) <- dplyr::select(balassa_sum_target, !!sym(target)) %>%
       dplyr::pull()
 
-    u <- uv
+    balassa_sum_target <- uv
+    rm(uv)
   }
 
   # compute proximity matrices ----
 
-  if (mat == "both") {
-    mat2 <- c("x", "y")
+  if (compute == "both") {
+    compute2 <- c("source", "target")
   } else {
-    mat2 <- mat
+    compute2 <- compute
   }
 
-  if (!is.null(d)) {
-    bi <- bi[rownames(bi) %in% names(d), ]
+  if (!is.null(balassa_sum_source)) {
+    balassa_index <- balassa_index[rownames(balassa_index) %in% names(balassa_sum_source), ]
   }
 
-  if (!is.null(u)) {
-    bi <- bi[, colnames(bi) %in% names(u)]
+  if (!is.null(balassa_sum_target)) {
+    balassa_index <- balassa_index[, colnames(balassa_index) %in% names(balassa_sum_target)]
   }
 
-  if (any("x" %in% mat2) == TRUE) {
-    x1 <- bi %*% Matrix::t(bi)
+  if (any("source" %in% compute2) == TRUE) {
+    p1 <- balassa_index %*% Matrix::t(balassa_index)
 
-    x2 <- outer(d, d, pmax)
+    p2 <- outer(balassa_sum_source, balassa_sum_source, pmax)
 
-    if (tbl == FALSE) {
-      prox_x <- Matrix::Matrix(x1 / x2, sparse = TRUE)
-    } else {
-      prox_x <- x1 / x2
+    prox_x <- p1 / p2
 
-      prox_x[upper.tri(prox_x, diag = TRUE)] <- 0
+    prox_x[upper.tri(prox_x, diag = TRUE)] <- 0
 
-      prox_x <- as.matrix(prox_x) %>%
-        dplyr::as_tibble() %>%
-        dplyr::mutate(from = rownames(prox_x)) %>%
-        tidyr::gather(!!sym("to"), !!sym("value"), -!!sym("from")) %>%
-        dplyr::filter(!!sym("value") > 0)
-    }
+    prox_x <- as.matrix(prox_x) %>%
+      dplyr::as_tibble() %>%
+      dplyr::mutate(source = rownames(prox_x)) %>%
+      tidyr::gather(!!sym(target), !!sym(value), -!!sym(source)) %>%
+      dplyr::filter(!!sym(value) > 0)
   } else {
     prox_x <- NULL
   }
 
-  if (any("y" %in% mat2) == TRUE) {
-    p1 <- Matrix::t(bi) %*% bi
+  if (any("target" %in% compute2) == TRUE) {
+    p1 <- Matrix::t(balassa_index) %*% balassa_index
 
-    p2 <- outer(u, u, pmax)
+    p2 <- outer(balassa_sum_target, balassa_sum_target, pmax)
 
-    if (tbl == FALSE) {
-      prox_y <- Matrix::Matrix(p1 / p2, sparse = TRUE)
-    } else {
-      prox_y <- p1 / p2
+    prox_y <- p1 / p2
 
-      prox_y[upper.tri(prox_y, diag = TRUE)] <- 0
+    prox_y[upper.tri(prox_y, diag = TRUE)] <- 0
 
-      prox_y <- as.matrix(prox_y) %>%
-        dplyr::as_tibble() %>%
-        dplyr::mutate(from = rownames(prox_y)) %>%
-        tidyr::gather(!!sym("to"), !!sym("value"), -!!sym("from")) %>%
-        dplyr::filter(!!sym("value") > 0)
-    }
+    prox_y <- as.matrix(prox_y) %>%
+      dplyr::as_tibble() %>%
+      dplyr::mutate(source = rownames(prox_y)) %>%
+      tidyr::gather(!!sym(target), !!sym(value), -!!sym(source)) %>%
+      dplyr::filter(!!sym(value) > 0)
   } else {
     prox_y <- NULL
   }
 
   return(
     list(
-      proximity_x = prox_x,
-      proximity_y = prox_y
+      proximity_source = prox_x,
+      proximity_target = prox_y
     )
   )
 }

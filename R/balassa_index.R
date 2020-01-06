@@ -1,21 +1,23 @@
-#' Balassa Index (or Revealed Comparative Advantage, RCA)
+#' Balassa Index
 #'
-#' @export
+#' @description \code{balassa_index()} computes the Balassa Index for a
+#' bipartite relation between two disjoint sets X (the "source" side) and Y (the
+#' "target" side).
 #'
-#' @param d tibble/data.frame in long format or a dense/sparse matrix
-#' @param x column with the elements of set X (applies only if d is a
-#' tibble/data.frame)
-#' @param y column with the elements of set Y (applies only if d is a
-#' tibble/data.frame)
-#' @param v column with a metric of the relation between the elements of th
-#' sets X and Y (applies only if d is a tibble/data.frame)
-#' @param cut cutoff value used for discretization (default set
-#' to 1)
-#' @param dis when set to TRUE, all the Balassa Index values are converted
-#' to discrete values, anything below the cutoff is converted to 0 and 1
-#' otherwise (default set to TRUE)
-#' @param tbl when set to TRUE, the output will be a tibble instead of a
-#' matrix (default set to TRUE)
+#' @details TBD
+#'
+#' @param data a data frame or matrix.
+#' @param source a column with the elements of set X (applies only if data is
+#' a data frame).
+#' @param target a column with the elements of set Y (applies only if data is
+#' a data frame).
+#' @param value a column with some metric of the relation between the elements
+#' of X and Y (applies only if data is a data frame).
+#' @param discrete if \code{TRUE} the Balassa Index values are converted to
+#' discrete values (1/0) unless you set this to \code{FALSE}. Anything below the
+#' specified cutoff is converted to 0 and 1 otherwise.
+#' @param cutoff the cutoff value used for discretization. The default is 1 but
+#' it can be any numeric value.
 #'
 #' @importFrom magrittr %>%
 #' @importFrom dplyr select group_by ungroup mutate summarise matches
@@ -25,9 +27,7 @@
 #' @importFrom rlang sym syms :=
 #'
 #' @examples
-#' balassa_index(
-#'   d = trade_1962, x = "country", y = "product", v = "value"
-#' )
+#' balassa_index(data = trade, value = "export_value")
 #'
 #' @references
 #' For more information see:
@@ -37,99 +37,75 @@
 #' and the references therein.
 #'
 #' @keywords functions
+#'
+#' @export
 
-balassa_index <- function(d = NULL,
-                          x = NULL,
-                          y = NULL,
-                          v = NULL,
-                          cut = 1,
-                          dis = TRUE,
-                          tbl = TRUE) {
+balassa_index <- function(data, source = "source", target = "target", value = "value",
+                          discrete = TRUE, cutoff = 1) {
   # sanity checks ----
-  if (all(class(d) %in% c("data.frame", "matrix", "dgeMatrix", "dsCMatrix",
+  if (all(class(data) %in% c("data.frame", "matrix", "dgeMatrix", "dsCMatrix",
                           "dgCMatrix") == FALSE)) {
-    stop("d must be a tibble/data.frame or a dense/sparse matrix")
+    stop("The input data must be a data frame or a matrix.")
   }
 
-  if (!is.character(x) | !is.character(y) | !is.character(v)) {
-    stop("x, y and v must be character")
+  if (!is.character(source) | !is.character(target) | !is.character(value)) {
+    stop("Source, target and value must be of type character.")
   }
 
-  if (!is.logical(dis)) {
-    stop("discrete must be TRUE or FALSE")
+  if (!is.logical(discrete)) {
+    stop("Discrete must be TRUE or FALSE.")
   }
 
-  if (!is.numeric(cut)) {
-    stop("cutoff must be numeric")
+  if (!is.numeric(cutoff)) {
+    stop("The cutoff must be numeric,")
   }
 
-  if (!is.logical(tbl)) {
-    stop("tbl must be matrix or tibble")
+  # convert matrix to data.frame ----
+  if (any(class(data) %in% c("dgeMatrix", "dsCMatrix", "dgCMatrix"))) {
+    data <- as.matrix(data)
   }
 
-  # convert d from matrix to tibble ----
-  if (any(class(d) %in% c("dgeMatrix", "dsCMatrix", "dgCMatrix"))) {
-    d <- as.matrix(d)
-  }
+  if (is.matrix(data)) {
+    data_rownames <- rownames(data)
 
-  if (!is.data.frame(d)) {
-    d_rownames <- rownames(d)
-
-    d <- as.data.frame(d) %>%
+    data <- as.data.frame(data) %>%
       dplyr::as_tibble() %>%
-      dplyr::mutate(!!sym(x) := d_rownames) %>%
-      tidyr::gather(!!sym(y), !!sym(v), -!!sym(x))
+      dplyr::mutate(!!sym(source) := data_rownames) %>%
+      tidyr::gather(!!sym(target), !!sym(value), -!!sym(source))
   }
 
-  # aggregate input d by x and y ----
-  d <- d %>%
+  # aggregate input by x and y ----
+  data <- data %>%
     # Sum by x and y
-    dplyr::group_by(!!!syms(c(x, y))) %>%
-    dplyr::summarise(vxy = sum(!!sym(v), na.rm = TRUE)) %>%
+    dplyr::group_by(!!!syms(c(source, target))) %>%
+    dplyr::summarise(vxy = sum(!!sym(value), na.rm = TRUE)) %>%
     dplyr::ungroup() %>%
     dplyr::filter(!!sym("vxy") > 0)
 
   # compute RCA in tibble form ----
-  d <- d %>%
+  data <- data %>%
     # Sum by x
-    dplyr::group_by(!!sym(x)) %>%
+    dplyr::group_by(!!sym(source)) %>%
     dplyr::mutate(sum_x_vxy = sum(!!sym("vxy"), na.rm = TRUE)) %>%
 
     # Sum by y
-    dplyr::group_by(!!sym(y)) %>%
+    dplyr::group_by(!!sym(target)) %>%
     dplyr::mutate(sum_y_vxy = sum(!!sym("vxy"), na.rm = TRUE)) %>%
 
-    # Compute RCA
+    # Compute BI
     dplyr::ungroup() %>%
     dplyr::mutate(
       sum_x_y_vxy = sum(!!sym("vxy"), na.rm = TRUE),
-      v = (!!sym("vxy") / !!sym("sum_x_vxy")) / (!!sym("sum_y_vxy") /
-                                                   !!sym("sum_x_y_vxy"))
+      value = (!!sym("vxy") / !!sym("sum_x_vxy")) / (!!sym("sum_y_vxy") / !!sym("sum_x_y_vxy"))
     ) %>%
-    dplyr::select(-dplyr::matches("vxy")) %>%
+    dplyr::select(-dplyr::matches("vxy"))
 
-    # Rename columns
-    dplyr::rename(x = !!sym(x), y = !!sym(y))
-
-  if (dis == TRUE) {
-    d <- d %>%
-      dplyr::mutate(!!sym("v") := dplyr::if_else(!!sym("v") > cut, 1, 0))
+  if (discrete == TRUE) {
+    data <- data %>%
+      dplyr::mutate(!!sym("value") := dplyr::if_else(!!sym("value") > cutoff, 1, 0))
   }
 
-  if (tbl == FALSE) {
-    d <- d %>%
-      tidyr::spread(!!sym("y"), !!sym("v"))
+  names(data) <- c("source", "target", "value")
 
-    d_rownames <- dplyr::select(d, !!sym("x")) %>%
-      dplyr::pull()
-
-    d <- dplyr::select(d, -!!sym("x")) %>% as.matrix()
-    d[is.na(d)] <- 0
-    rownames(d) <- d_rownames
-    d <- Matrix::Matrix(d, sparse = TRUE)
-  } else {
-    names(d) <- c(x,y,v)
-  }
-
-  return(d)
+  return(data)
 }

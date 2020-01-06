@@ -18,8 +18,7 @@ Description: A consistent tool to explore bipartite relations. These methods
  Network <doi:10.1073/pnas.0701361104>.
  The functions within this package correspond to code implementations of the 
  equations described in Mariani, et al. (2015) <doi:10.1140/epjb/e2015-60298-7>
- Hausmann, et al. (2014) <doi:10.7551/mitpress/9647.001.0001>, and
- Hausmann, et al. (2005) <doi:10.3386/w11905>.
+ and Hausmann, et al. (2014) <doi:10.7551/mitpress/9647.001.0001>.
 License: GPL-3
 Encoding: UTF-8
 LazyData: true

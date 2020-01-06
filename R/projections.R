@@ -2,9 +2,9 @@
 #'
 #' @export
 #'
-#' @param px tibble/data.frame or sparse/dense matrix containing proximity
+#' @param proximity_source tibble/data.frame or sparse/dense matrix containing proximity
 #' measures for the elements of set X (e.g. proximity_x from \code{proximity()})
-#' @param py tibble/data.frame or sparse/dense matrix containing proximity
+#' @param proximity_target tibble/data.frame or sparse/dense matrix containing proximity
 #' measures for the elements of set Y (e.g. proximity_y from \code{proximity()})
 #' @param f column with the "from" side
 #' in a relation between elements of the same set (applies only if d is a
@@ -13,9 +13,9 @@
 #' set (applies only if d is a tibble/data.frame)
 #' @param v column with a metric of the relation between the elements of the
 #' same set (applies only if d is a tibble/data.frame)
-#' @param ax average number of connections for the projection of X
+#' @param avg_source average number of connections for the projection of X
 #' (default set to 4)
-#' @param ay average number of connections for the projection of Y
+#' @param avg_target average number of connections for the projection of Y
 #' (default set to 4)
 #' @param tol tolerance for proximity variation on each iteration until
 #' obtaining the desired average number of connections (default set to 0.01)
@@ -32,8 +32,8 @@
 #'
 #' @examples
 #' projections(
-#'   px = binet_output$proximity$proximity_x,
-#'   py = binet_output$proximity$proximity_y,
+#'   proximity_source = binet_output$proximity$proximity_x,
+#'   proximity_target = binet_output$proximity$proximity_y,
 #'   f = "from",
 #'   t = "to",
 #'   v = "value",
@@ -50,26 +50,22 @@
 #'
 #' @keywords functions
 
-projections <- function(px = NULL,
-                        py = NULL,
-                        f = "from",
-                        t = "to",
-                        v = "value",
-                        ax = 4,
-                        ay = 4,
+projections <- function(proximity_source = NULL,
+                        proximity_target = NULL,
+                        avg_source = 4,
+                        avg_target = 4,
                         tol = 0.01,
-                        tbl = TRUE,
                         pro = "both") {
   # sanity checks ----
-  if (all(class(px) %in% c("data.frame", "matrix", "dgeMatrix", "dgCMatrix",
+  if (all(class(proximity_source) %in% c("data.frame", "matrix", "dgeMatrix", "dgCMatrix",
                            "dsCMatrix") == FALSE) |
-    all(class(py) %in% c("data.frame", "matrix", "dgeMatrix", "dgCMatrix",
+    all(class(proximity_target) %in% c("data.frame", "matrix", "dgeMatrix", "dgCMatrix",
                          "dsCMatrix") == FALSE)) {
-    stop("px and py must be tibble/data.frame or dense/sparse matrix")
+    stop("proximity_source and proximity_target must be tibble/data.frame or dense/sparse matrix")
   }
 
-  if (!is.numeric(ax) | !is.numeric(ay)) {
-    stop("ax & ay must be numeric")
+  if (!is.numeric(avg_source) | !is.numeric(avg_target)) {
+    stop("avg_source and avg_target must be numeric")
   }
 
   if (!is.logical(tbl)) {
@@ -88,32 +84,32 @@ projections <- function(px = NULL,
 
   if (any("x" %in% pro2) == TRUE) {
     # arrange x matrix ----
-    if (any(class(px) %in% c("dgeMatrix", "dgCMatrix", "dsCMatrix") == TRUE)) {
-      px <- as.matrix(px)
+    if (any(class(proximity_source) %in% c("dgeMatrix", "dgCMatrix", "dsCMatrix") == TRUE)) {
+      proximity_source <- as.matrix(proximity_source)
     }
 
-    if (is.matrix(px)) {
-      px[upper.tri(px, diag = TRUE)] <- 0
-      row_names <- rownames(px)
+    if (is.matrix(proximity_source)) {
+      proximity_source[upper.tri(proximity_source, diag = TRUE)] <- 0
+      row_names <- rownames(proximity_source)
 
-      px <- px %>%
+      proximity_source <- proximity_source %>%
         dplyr::as_tibble() %>%
         dplyr::mutate(from = row_names) %>%
-        tidyr::gather(!!sym(t), !!sym(v), -!!sym(f)) %>%
-        dplyr::filter(!!sym(v) > 0)
+        tidyr::gather(!!sym("target"), !!sym("value"), -!!sym("source")) %>%
+        dplyr::filter(!!sym("value") > 0)
     }
 
     # compute x network ----
-    px <- dplyr::mutate(px,
-      value = -1 * !!sym(v)
+    proximity_source <- dplyr::mutate(proximity_source,
+      value = -1 * !!sym("value")
     )
 
     message("Computing projection of X...")
 
-    xg <- igraph::graph_from_data_frame(px, directed = FALSE)
+    xg <- igraph::graph_from_data_frame(proximity_source, directed = FALSE)
 
     x_mst <- igraph::mst(xg,
-      weights = px$value,
+      weights = proximity_source$value,
       algorithm = "prim"
     )
     x_mst <- igraph::as_data_frame(x_mst)
@@ -124,18 +120,18 @@ projections <- function(px = NULL,
     while(avg_links_n == FALSE) {
       if (threshold <= -1) {
         message("no threshold achieves the avg number of connections for X projection, returning maximum spanning tree")
-        xg <- dplyr::mutate(x_mst, value = -1 * !!sym(v))
+        xg <- dplyr::mutate(x_mst, value = -1 * !!sym("value"))
         xg <- igraph::graph_from_data_frame(xg, directed = FALSE)
         avg_links_n <- TRUE
       } else {
         message(sprintf("%s threshold...", threshold))
 
-        xg_nmst <- px %>%
-          dplyr::filter(!!sym(v) <= threshold) %>%
+        xg_nmst <- proximity_source %>%
+          dplyr::filter(!!sym("value") <= threshold) %>%
           dplyr::anti_join(x_mst, by = c("from", "to"))
 
         xg <- dplyr::bind_rows(x_mst, xg_nmst)
-        xg <- dplyr::mutate(xg, value = -1 * !!sym(v))
+        xg <- dplyr::mutate(xg, value = -1 * !!sym("value"))
 
         xg <- igraph::graph_from_data_frame(xg, directed = FALSE)
         xg <- igraph::simplify(xg,
@@ -144,7 +140,7 @@ projections <- function(px = NULL,
         )
 
         avg_links <- mean(igraph::degree(xg))
-        avg_links_n <- ifelse(avg_links <= ax, TRUE, FALSE)
+        avg_links_n <- ifelse(avg_links <= avg_source, TRUE, FALSE)
         threshold <- threshold - tol
 
         if (avg_links_n == TRUE) {
@@ -162,32 +158,32 @@ projections <- function(px = NULL,
 
   if (any("y" %in% pro2) == TRUE) {
     # arrange y matrix ----
-    if (any(class(py) %in% c("dgeMatrix", "dgCMatrix", "dsCMatrix") == TRUE)) {
-      py <- as.matrix(py)
+    if (any(class(proximity_target) %in% c("dgeMatrix", "dgCMatrix", "dsCMatrix") == TRUE)) {
+      proximity_target <- as.matrix(proximity_target)
     }
 
-    if (is.matrix(py)) {
-      py[upper.tri(py, diag = TRUE)] <- 0
-      row_names <- rownames(py)
+    if (is.matrix(proximity_target)) {
+      proximity_target[upper.tri(proximity_target, diag = TRUE)] <- 0
+      row_names <- rownames(proximity_target)
 
-      py <- py %>%
+      proximity_target <- proximity_target %>%
         dplyr::as_tibble() %>%
         dplyr::mutate(from = row_names) %>%
-        tidyr::gather(!!sym(t), !!sym(v), -!!sym(f)) %>%
-        dplyr::filter(!!sym(v) > 0)
+        tidyr::gather(!!sym("target"), !!sym("value"), -!!sym("source")) %>%
+        dplyr::filter(!!sym("value") > 0)
     }
 
     # compute y network ----
-    py <- dplyr::mutate(py,
-      value = -1 * !!sym(v)
+    proximity_target <- dplyr::mutate(proximity_target,
+      value = -1 * !!sym("value")
     )
 
     message("Computing Y projection...")
 
-    yg <- igraph::graph_from_data_frame(py, directed = FALSE)
+    yg <- igraph::graph_from_data_frame(proximity_target, directed = FALSE)
 
     y_mst <- igraph::mst(yg,
-      weights = py$value,
+      weights = proximity_target$value,
       algorithm = "prim"
     )
     y_mst <- igraph::as_data_frame(y_mst)
@@ -198,18 +194,18 @@ projections <- function(px = NULL,
     while(avg_links_n == FALSE) {
       if (threshold <= -1) {
         message("no threshold achieves the avg number of connections for Y projection, returning maximum spanning tree")
-        yg <- dplyr::mutate(y_mst, value = -1 * !!sym(v))
+        yg <- dplyr::mutate(y_mst, value = -1 * !!sym("value"))
         yg <- igraph::graph_from_data_frame(yg, directed = FALSE)
         avg_links_n <- TRUE
       } else {
         message(sprintf("%s threshold...", threshold))
 
-        yg_nmst <- py %>%
-          dplyr::filter(!!sym(v) <= threshold) %>%
+        yg_nmst <- proximity_target %>%
+          dplyr::filter(!!sym("value") <= threshold) %>%
           dplyr::anti_join(y_mst, by = c("from", "to"))
 
         yg <- dplyr::bind_rows(y_mst, yg_nmst)
-        yg <- dplyr::mutate(yg, value = -1 * !!sym(v))
+        yg <- dplyr::mutate(yg, value = -1 * !!sym("value"))
 
         yg <- igraph::graph_from_data_frame(yg, directed = FALSE)
         yg <- igraph::simplify(yg,
@@ -218,7 +214,7 @@ projections <- function(px = NULL,
         )
 
         avg_links <- mean(igraph::degree(yg))
-        avg_links_n <- ifelse(avg_links <= ay, TRUE, FALSE)
+        avg_links_n <- ifelse(avg_links <= avg_target, TRUE, FALSE)
         threshold <- threshold - tol
 
         if (avg_links_n == TRUE) {

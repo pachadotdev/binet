@@ -1,15 +1,13 @@
 ba_ind <- balassa_index(
-  d = trade_1962, x = "country", y = "product", v = "value"
+  data = trade, source = "country", target = "product", value = "export_value"
 )
 
-com_fit <- complexity_measures(
-  ba_ind = ba_ind, x = "country", y = "product", v = "value"
-)
+com_fit <- complexity_measures(ba_ind)
 
 prox <- proximity(
-  ba_ind = ba_ind, x = "country", y = "product", v = "value",
-  d = com_fit$diversity, dx = "country", dv = "value",
-  u = com_fit$ubiquity, uy = "product", uv = "value",
+  balassa_index = ba_ind,
+  balassa_sum_source = com_fit$balassa_sum_source,
+  balassa_sum_target = com_fit$balassa_sum_target
 )
 
 proj <- projections(

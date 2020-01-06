@@ -1,10 +1,6 @@
-test_that("balassa_index matrix/tibble fulfills desired properties with data frames", {
+test_that("balassa_index works with a data frame", {
   bi <- balassa_index(
-    d = trade_1962,
-    x = "country",
-    y = "product",
-    v = "value",
-    tbl = T
+    data = trade, source = "country", target = "product", value = "export_value"
   )
 
   expect_is(bi, "data.frame")
@@ -13,54 +9,47 @@ test_that("balassa_index matrix/tibble fulfills desired properties with data fra
   expect_equal(max(bi$value), 1)
 })
 
-test_that("balassa_index matrix/tibble fulfills desired properties with a matrix", {
-  trade_1962_m <- trade_1962 %>%
-    tidyr::spread(product, value)
+test_that("balassa_index with a matrix", {
+  trade_m <- trade %>%
+    tidyr::spread(product, export_value)
 
-  trade_1962_rownames <- dplyr::select(trade_1962_m, country) %>%
+  trade_rownames <- dplyr::select(trade_m, country) %>%
     dplyr::pull()
 
-  trade_1962_m <- dplyr::select(trade_1962_m, -country) %>% as.matrix()
-  trade_1962_m[is.na(trade_1962_m)] <- 0
-  rownames(trade_1962_m) <- trade_1962_rownames
+  trade_m <- dplyr::select(trade_m, -country) %>% as.matrix()
+  trade_m[is.na(trade_m)] <- 0
+  rownames(trade_m) <- trade_rownames
 
-  trade_1962_m <- Matrix::Matrix(trade_1962_m, sparse = TRUE)
+  trade_m <- Matrix::Matrix(trade_m, sparse = TRUE)
 
   bi <- balassa_index(
-    d = trade_1962_m,
-    x = "country",
-    y = "product",
-    v = "value",
-    tbl = F
+    data = trade_m, source = "country", target = "product", value = "export_value"
   )
 
-  expect_is(bi, "dgCMatrix")
-  expect_equal(nrow(bi), 158)
-  expect_equal(ncol(bi), 991)
-  expect_equal(min(bi), 0)
-  expect_equal(max(bi), 1)
+  expect_is(bi, "data.frame")
+  expect_equal(nrow(bi), 44435)
+  expect_equal(min(bi$value), 0)
+  expect_equal(max(bi$value), 1)
 })
 
-test_that("balassa_index returns error with vector input", {
+test_that("balassa_index returns error with vector data", {
   expect_error(
     balassa_index(
-      d = as.numeric(trade_1962$value),
-      x = "country",
-      y = "product",
-      v = "value",
-      tbl = T
+      data = as.numeric(trade$export_value),
+      source = "country",
+      target = "product",
+      value = "export_value"
     )
   )
 })
 
-test_that("balassa_index returns error with numeric colnames", {
+test_that("balassa_index returns error with numeric source/target", {
   expect_error(
     balassa_index(
-      d = trade_1962,
-      x = 200,
-      y = 100,
-      v = "value",
-      tbl = T
+      data = trade,
+      source = 200,
+      target = 100,
+      value = "export_value"
     )
   )
 })
@@ -68,12 +57,11 @@ test_that("balassa_index returns error with numeric colnames", {
 test_that("balassa_index returns error with character discrete", {
   expect_error(
     balassa_index(
-      d = trade_1962,
-      x = "country",
-      y = "product",
-      v = "value",
-      dis = "yes",
-      tbl = T
+      data = trade,
+      source = "country",
+      target = "product",
+      value = "export_value",
+      discrete = "yes"
     )
   )
 })
@@ -81,25 +69,11 @@ test_that("balassa_index returns error with character discrete", {
 test_that("balassa_index returns error with character cutoff", {
   expect_error(
     balassa_index(
-      d = trade_1962,
-      x = "country",
-      y = "product",
-      v = "value",
-      cut = "two",
-      tbl = T
-    )
-  )
-})
-
-test_that("balassa_index returns error with character tibble", {
-  expect_error(
-    balassa_index(
-      d = trade_1962,
-      x = "country",
-      y = "product",
-      v = "value",
-      cut = 1,
-      tbl = "yes"
+      data = trade,
+      source = "country",
+      target = "product",
+      value = "export_value",
+      cutoff = "one"
     )
   )
 })

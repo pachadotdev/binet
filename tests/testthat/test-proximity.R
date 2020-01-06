@@ -1,14 +1,8 @@
 test_that("proximity results are aligned with the expected output", {
   pr <- proximity(
-    bi = binet_output$balassa_index,
-    x = "country",
-    y = "product",
-    v = "value",
-    d = binet_output$complexity_measures$diversity,
-    dx = "country",
-    u = binet_output$complexity_measures$ubiquity,
-    uy = "product",
-    tbl = T
+    balassa_index = binet_output$balassa_index,
+    balassa_sum_source = binet_output$complexity_measures$diversity,
+    balassa_sum_target = binet_output$complexity_measures$ubiquity
   )
 
   expect_is(pr, "list")
