@@ -4,8 +4,14 @@
 \alias{balassa_index}
 \title{Balassa Index}
 \usage{
-balassa_index(data, source = "source", target = "target",
-  value = "value", discrete = TRUE, cutoff = 1)
+balassa_index(
+  data,
+  source = "source",
+  target = "target",
+  value = "value",
+  discrete = TRUE,
+  cutoff = 1
+)
 }
 \arguments{
 \item{data}{a data frame or matrix.}
@@ -35,7 +41,12 @@ bipartite relation between two disjoint sets X (the "source" side) and Y (the
 TBD
 }
 \examples{
-balassa_index(data = trade, value = "export_value")
+balassa_index(
+    data = trade,
+    source = "country",
+    target = "product",
+    value = "export_value"
+)
 
 }
 \references{

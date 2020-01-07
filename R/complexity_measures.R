@@ -46,15 +46,15 @@ complexity_measures <- function(balassa_index, source = "source", target = "targ
   # sanity checks ----
   if (all(class(balassa_index) %in% c("data.frame", "matrix", "dgeMatrix", "dsCMatrix",
                              "dgCMatrix") == FALSE)) {
-    stop("balassa_index must be a data.frame or matrix")
+    stop("'balassa_index' must be a data.frame or matrix")
   }
 
-  if (!(any(method %in% c("reflections", "eigenvalues", "fitness")) == TRUE)) {
-    stop("method must be reflections, eigenvalues or fitness")
+  if (!(any(method %in% c("fitness", "reflections", "eigenvalues")) == TRUE)) {
+    stop("'method' must be 'fitness', 'reflections' or 'eigenvalues'")
   }
 
   if (is.integer(iterations) & !iterations >= 2) {
-    stop("iterations must be integer and greater or equal to 2")
+    stop("'iterations' must be integer and >= 2")
   }
 
   # convert data.frame input to matrix ----

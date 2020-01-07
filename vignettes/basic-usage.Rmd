@@ -24,151 +24,100 @@ within this package.
 ```{r}
 library(binet)
 
-trade_1962
+trade
 ```
 
-## Balassa Index (or Revealed comparative Advantage, RCA)
+## Balassa Index
 
 You can obtain Balassa Index with `balassa_index()`.
 
 ```{r}
 bi <- balassa_index(
-  d = trade_1962,
-  x = "country",
-  y = "product",
-  v = "value"
+  data = trade,
+  source = "country",
+  target = "product",
+  value = "export_value"
 )
 
 bi
 ```
 
-You can also obtain it in matrix version.
-
-```{r}
-bi_m <- balassa_index(
-  d = trade_1962,
-  x = "country",
-  y = "product",
-  v = "value",
-  tbl = F
-)
-
-# 5x5 preview
-bi_m[1:5,1:5]
-```
-
-Another possibility is to obtain Balassa Index as a matrix or tibble without discretization.
+Another possibility is to obtain Balassa Index without discretization.
 
 ```{r}
 bi_dec <- balassa_index(
-  d = trade_1962,
-  x = "country",
-  y = "product",
-  v = "value",
-  dis = F
+  data =trade,
+  source = "country",
+  target = "product",
+  value = "export_value",
+  discrete = F
 )
 
 bi_dec
 ```
 
-```{r}
-bi_dec_m <- balassa_index(
-  d = trade_1962,
-  x = "country",
-  y = "product",
-  v = "value",
-  tbl = F,
-  dis = F
-)
-
-# 5x5 preview
-bi_dec_m[1:5,1:5]
-```
-
 ## Complexity Measures
 
-You can compute both Economic Complexity Index (ECI) and Product Complexity Index (PCI) by using `complexity_measures()`. The calculations methods are *reflections*, *eigenvalues* and *fitness* (default). See [@measuringcomplexity2015] for the methodological details.
+You can compute complexity indexes (e.g. such as the Economic Complexity Index and Product Complexity Index) by using `complexity_measures()`. The calculations methods are *fitness* (default), *reflections*, *eigenvalues*. See [@measuringcomplexity2015] for the methodological details.
+
+```{r}
+com_fit <- complexity_measures(balassa_index = bi)
+
+com_fit$complexity_index_source
+com_fit$complexity_index_target
+```
 
 ```{r}
 com_ref <- complexity_measures(
-  bi = bi,
-  x = "country",
-  y = "product",
-  v = "value",
+  balassa_index = bi,
   method = "reflections"
 )
 
-com_ref$complexity_index_x
-com_ref$complexity_index_y
+com_ref$complexity_index_source
+com_ref$complexity_index_target
 ```
 
 ```{r}
 com_eig <- complexity_measures(
-  bi = bi,
-  x = "country",
-  y = "product",
-  v = "value",
+  balassa_index = bi,
   method = "eigenvalues"
 )
 
-com_eig$complexity_index_x
-com_eig$complexity_index_y
-```
-
-```{r}
-com_fit <- complexity_measures(
-  bi = bi,
-  x = "country",
-  y = "product",
-  v = "value",
-  method = "fitness"
-)
-
-com_fit$complexity_index_x
-com_fit$complexity_index_y
+com_eig$complexity_index_source
+com_eig$complexity_index_target
 ```
 
 ## Proximity
 
-Proximity matrices are used to create both country-country and product-product
-networks. Using `proximity()` is straightforward.
+Proximity matrices are used to create projections e.g. (country-country and product-product
+networks) for bipartite networks. Using `proximity()` is straightforward.
 
 ```{r}
 pro <- proximity(
-  bi = bi,
-  x = "country",
-  y = "product",
-  v = "value",
-  d = com_fit$diversity,
-  dx = "country",
-  dv = "value",
-  u = com_fit$ubiquity,
-  uy = "product",
-  uv = "value"
+  balassa_index = bi,
+  balassa_sum_source = com_fit$balassa_sum_source,
+  balassa_sum_target = com_fit$balassa_sum_target
 )
 
-pro$proximity_x
-pro$proximity_y
+pro$proximity_source
+pro$proximity_target
 ```
 
 ## Networks
 
-The `proximity_networks()` function is designed to use `igraph` for the internal
+The `projections()` function is designed to use `igraph` for the internal
 computations and also to pass proximity-based networks to `igraph`, `ggraph`
 or export to Cytoscape by saving the output as csv/tsv.
 
 ```{r}
 net <- projections(
-  px = pro$proximity_x,
-  py = pro$proximity_y,
-  tol = 0.1,
-  f = "from",
-  t = "to",
-  v = "value"
+  proximity_source = pro$proximity_source,
+  proximity_target = pro$proximity_target,
+  tolerance = 0.05
 )
 
-net$network_x
-net$network_y
+net$network_source
+net$network_target
 ```
 
 Just two basic examples with `ggraph`.
@@ -180,7 +129,7 @@ library(magrittr)
 
 set.seed(200100)
 
-net$network_x %>%
+net$network_source %>%
   graph_from_data_frame(directed = F) %>%
   ggraph(layout = "kk") +
   geom_edge_link(aes(edge_alpha = value, edge_width = value),
@@ -192,7 +141,7 @@ net$network_x %>%
 ```
 
 ```{r, fig.width=20, fig.height=12}
-net$network_y %>%
+net$network_target %>%
   graph_from_data_frame(directed = F) %>%
   ggraph(layout = "kk") +
   geom_edge_link(aes(edge_alpha = value, edge_width = value),

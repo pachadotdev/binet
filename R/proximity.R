@@ -24,7 +24,7 @@
 #' @importFrom magrittr %>%
 #' @importFrom dplyr as_tibble select filter mutate pull
 #' @importFrom tibble deframe
-#' @importFrom tidyr pivot_longer pivot_wider
+#' @importFrom tidyr spread gather
 #' @importFrom Matrix Matrix t rowSums colSums
 #' @importFrom rlang sym syms
 #'
@@ -51,22 +51,22 @@ proximity <- function(balassa_index, balassa_sum_source, balassa_sum_target,
   # sanity checks ----
   if (all(class(balassa_index) %in% c("data.frame", "matrix", "dgeMatrix", "dsCMatrix",
                                "dgCMatrix") == FALSE)) {
-    stop("Balassa_index must be a data frame or matrix.")
+    stop("'balassa_index' must be a data.frame or matrix")
   }
 
   if (all(class(balassa_sum_source) %in% c("numeric", "data.frame") == FALSE) |
     all(class(balassa_sum_target) %in% c("numeric", "data.frame") == FALSE)) {
-    stop("Balassa_sum_source and u must be data frame or numeric.")
+    stop("'balassa_sum_source' and 'balassa_sum_target' must be data.frame or numeric")
   }
 
   if (!any(compute %in% c("both", "source", "target"))) {
-    stop("Compute must be 'both', 'source' or 'target'.")
+    stop("'compute' must be 'both', 'source' or 'target'")
   }
 
   # transformations for data frame inputs ----
   if (is.data.frame(balassa_index)) {
     balassa_index <- dplyr::select(balassa_index, !!!syms(c(source, target, value))) %>%
-      tidyr::pivot_wider(names_from = !!sym(target), values_from = !!sym(value))
+      tidyr::spread(!!sym(target), !!sym(value))
 
     balassa_index_rownames <- dplyr::select(balassa_index, !!sym(source)) %>%
       dplyr::pull()
@@ -120,7 +120,7 @@ proximity <- function(balassa_index, balassa_sum_source, balassa_sum_target,
     prox_x <- as.matrix(prox_x) %>%
       dplyr::as_tibble() %>%
       dplyr::mutate(source = rownames(prox_x)) %>%
-      tidyr::pivot_longer(-!!sym(source), names_to = target, values_to = value) %>%
+      tidyr::gather(!!sym(target), !!sym(value), -!!sym(source)) %>%
       dplyr::filter(!!sym(value) > 0)
   } else {
     prox_x <- NULL
@@ -138,7 +138,7 @@ proximity <- function(balassa_index, balassa_sum_source, balassa_sum_target,
     prox_y <- as.matrix(prox_y) %>%
       dplyr::as_tibble() %>%
       dplyr::mutate(source = rownames(prox_y)) %>%
-      tidyr::pivot_longer(-!!sym(source), names_to = target, values_to = value) %>%
+      tidyr::gather(!!sym(target), !!sym(value), -!!sym(source)) %>%
       dplyr::filter(!!sym(value) > 0)
   } else {
     prox_y <- NULL

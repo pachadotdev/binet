@@ -4,9 +4,16 @@
 \alias{projections}
 \title{Projections of a bipartite network}
 \usage{
-projections(proximity_source, proximity_target, source = "source",
-  target = "target", value = "value", avg_links = 4,
-  tolerance = 0.01, compute = "both")
+projections(
+  proximity_source,
+  proximity_target,
+  source = "source",
+  target = "target",
+  value = "value",
+  avg_links = 4,
+  tolerance = 0.01,
+  compute = "both"
+)
 }
 \arguments{
 \item{proximity_source}{tibble/data.frame or sparse/dense matrix containing proximity
@@ -32,17 +39,17 @@ obtaining the desired average number of connections (default set to 0.01)}
 
 \item{compute}{which projection to compute. By default is "both" (both
 projections) but it can also be "source" or "target".}
-
-\item{tbl}{when set to TRUE the output will be a tibble instead of a
-graph (set to TRUE by default)}
 }
 \description{
-Projections of a bipartite network
+TBD
+}
+\details{
+TBD
 }
 \examples{
 projections(
-  proximity_source = binet_output$proximity$proximity_x,
-  proximity_target = binet_output$proximity$proximity_y
+  proximity_source = binet_output$proximity$proximity_source,
+  proximity_target = binet_output$proximity$proximity_target
 )
 
 }

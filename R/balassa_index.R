@@ -27,7 +27,12 @@
 #' @importFrom rlang sym syms :=
 #'
 #' @examples
-#' balassa_index(data = trade, value = "export_value")
+#' balassa_index(
+#'     data = trade,
+#'     source = "country",
+#'     target = "product",
+#'     value = "export_value"
+#' )
 #'
 #' @references
 #' For more information see:
@@ -45,19 +50,19 @@ balassa_index <- function(data, source = "source", target = "target", value = "v
   # sanity checks ----
   if (all(class(data) %in% c("data.frame", "matrix", "dgeMatrix", "dsCMatrix",
                           "dgCMatrix") == FALSE)) {
-    stop("The input data must be a data frame or a matrix.")
+    stop("'data' must be a data.frame or matrix")
   }
 
   if (!is.character(source) | !is.character(target) | !is.character(value)) {
-    stop("Source, target and value must be of type character.")
+    stop("'source', 'target' and 'value' must be of type character")
   }
 
   if (!is.logical(discrete)) {
-    stop("Discrete must be TRUE or FALSE.")
+    stop("'discrete' must be TRUE or FALSE")
   }
 
   if (!is.numeric(cutoff)) {
-    stop("The cutoff must be numeric,")
+    stop("'cutoff' must be numeric")
   }
 
   # convert matrix to data.frame ----

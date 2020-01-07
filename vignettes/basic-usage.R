@@ -4,119 +4,72 @@ knitr::opts_chunk$set(eval = TRUE, message = FALSE, warning = FALSE)
 ## -----------------------------------------------------------------------------
 library(binet)
 
-trade_1962
+trade
 
 ## -----------------------------------------------------------------------------
 bi <- balassa_index(
-  d = trade_1962,
-  x = "country",
-  y = "product",
-  v = "value"
+  data = trade,
+  source = "country",
+  target = "product",
+  value = "export_value"
 )
 
 bi
 
 ## -----------------------------------------------------------------------------
-bi_m <- balassa_index(
-  d = trade_1962,
-  x = "country",
-  y = "product",
-  v = "value",
-  tbl = F
-)
-
-# 5x5 preview
-bi_m[1:5,1:5]
-
-## -----------------------------------------------------------------------------
 bi_dec <- balassa_index(
-  d = trade_1962,
-  x = "country",
-  y = "product",
-  v = "value",
-  dis = F
+  data =trade,
+  source = "country",
+  target = "product",
+  value = "export_value",
+  discrete = F
 )
 
 bi_dec
 
 ## -----------------------------------------------------------------------------
-bi_dec_m <- balassa_index(
-  d = trade_1962,
-  x = "country",
-  y = "product",
-  v = "value",
-  tbl = F,
-  dis = F
-)
+com_fit <- complexity_measures(balassa_index = bi)
 
-# 5x5 preview
-bi_dec_m[1:5,1:5]
+com_fit$complexity_index_source
+com_fit$complexity_index_target
 
 ## -----------------------------------------------------------------------------
 com_ref <- complexity_measures(
-  bi = bi,
-  x = "country",
-  y = "product",
-  v = "value",
+  balassa_index = bi,
   method = "reflections"
 )
 
-com_ref$complexity_index_x
-com_ref$complexity_index_y
+com_ref$complexity_index_source
+com_ref$complexity_index_target
 
 ## -----------------------------------------------------------------------------
 com_eig <- complexity_measures(
-  bi = bi,
-  x = "country",
-  y = "product",
-  v = "value",
+  balassa_index = bi,
   method = "eigenvalues"
 )
 
-com_eig$complexity_index_x
-com_eig$complexity_index_y
-
-## -----------------------------------------------------------------------------
-com_fit <- complexity_measures(
-  bi = bi,
-  x = "country",
-  y = "product",
-  v = "value",
-  method = "fitness"
-)
-
-com_fit$complexity_index_x
-com_fit$complexity_index_y
+com_eig$complexity_index_source
+com_eig$complexity_index_target
 
 ## -----------------------------------------------------------------------------
 pro <- proximity(
-  bi = bi,
-  x = "country",
-  y = "product",
-  v = "value",
-  d = com_fit$diversity,
-  dx = "country",
-  dv = "value",
-  u = com_fit$ubiquity,
-  uy = "product",
-  uv = "value"
+  balassa_index = bi,
+  balassa_sum_source = com_fit$balassa_sum_source,
+  balassa_sum_target = com_fit$balassa_sum_target
 )
 
-pro$proximity_x
-pro$proximity_y
+pro$proximity_source
+pro$proximity_target
 
 ## -----------------------------------------------------------------------------
 net <- projections(
-  px = pro$proximity_x,
-  py = pro$proximity_y,
-  tol = 0.1,
-  f = "from",
-  t = "to",
-  v = "value"
+  proximity_source = pro$proximity_source,
+  proximity_target = pro$proximity_target,
+  tolerance = 0.05
 )
 
-net$network_x
-net$network_y
+net$network_source
+net$network_target
 
 ## ---- fig.width=20, fig.height=12---------------------------------------------
 library(igraph)
@@ -125,7 +78,7 @@ library(magrittr)
 
 set.seed(200100)
 
-net$network_x %>%
+net$network_source %>%
   graph_from_data_frame(directed = F) %>%
   ggraph(layout = "kk") +
   geom_edge_link(aes(edge_alpha = value, edge_width = value),
@@ -136,7 +89,7 @@ net$network_x %>%
   theme_void()
 
 ## ---- fig.width=20, fig.height=12---------------------------------------------
-net$network_y %>%
+net$network_target %>%
   graph_from_data_frame(directed = F) %>%
   ggraph(layout = "kk") +
   geom_edge_link(aes(edge_alpha = value, edge_width = value),
