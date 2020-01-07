@@ -41,6 +41,8 @@
 #' and the references therein.
 #'
 #' @keywords functions
+#'
+#' @export
 
 projections <- function(proximity_source, proximity_target,
                         source = "source", target = "target", value = "value",
