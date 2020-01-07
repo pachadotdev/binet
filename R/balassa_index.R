@@ -6,7 +6,7 @@
 #'
 #' @details TBD
 #'
-#' @param data a data frame or matrix.
+#' @param data a data frame
 #' @param source a column with the elements of set X (applies only if data is
 #' a data frame).
 #' @param target a column with the elements of set Y (applies only if data is
@@ -48,9 +48,8 @@
 balassa_index <- function(data, source = "source", target = "target", value = "value",
                           discrete = TRUE, cutoff = 1) {
   # sanity checks ----
-  if (all(class(data) %in% c("data.frame", "matrix", "dgeMatrix", "dsCMatrix",
-                          "dgCMatrix") == FALSE)) {
-    stop("'data' must be a data.frame or matrix")
+  if (!any(class(data) %in% "data.frame")) {
+    stop("'data' must be a data.frame")
   }
 
   if (!is.character(source) | !is.character(target) | !is.character(value)) {
@@ -63,20 +62,6 @@ balassa_index <- function(data, source = "source", target = "target", value = "v
 
   if (!is.numeric(cutoff)) {
     stop("'cutoff' must be numeric")
-  }
-
-  # convert matrix to data.frame ----
-  if (any(class(data) %in% c("dgeMatrix", "dsCMatrix", "dgCMatrix"))) {
-    data <- as.matrix(data)
-  }
-
-  if (is.matrix(data)) {
-    data_rownames <- rownames(data)
-
-    data <- as.data.frame(data) %>%
-      dplyr::as_tibble() %>%
-      dplyr::mutate(!!sym(source) := data_rownames) %>%
-      tidyr::gather(!!sym(target), !!sym(value), -!!sym(source))
   }
 
   # aggregate input by x and y ----

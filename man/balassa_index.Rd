@@ -14,7 +14,7 @@ balassa_index(
 )
 }
 \arguments{
-\item{data}{a data frame or matrix.}
+\item{data}{a data frame}
 
 \item{source}{a column with the elements of set X (applies only if data is
 a data frame).}

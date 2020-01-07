@@ -4,20 +4,20 @@
 #'
 #' @details TBD
 #'
-#' @param proximity_source tibble/data.frame or sparse/dense matrix containing proximity
-#' measures for the elements of set X (e.g. proximity_x from \code{proximity()})
-#' @param proximity_target tibble/data.frame or sparse/dense matrix containing proximity
-#' measures for the elements of set Y (e.g. proximity_y from \code{proximity()})
+#' @param proximity_source a data frame containing proximity
+#' values for the elements of set X (e.g. proximity_source from \code{proximity()})
+#' @param proximity_target a data frame containing proximity
+#' values for the elements of set Y (e.g. proximity_target from \code{proximity()})
 #' @param source a column with the elements of set X (applies only if data is
 #' a data frame).
 #' @param target a column with the elements of set Y (applies only if data is
 #' a data frame).
-#' @param value a column with some metric of the relation between the elements
-#' of X and Y (applies only if data is a data frame).
+#' @param value a column with the proximity values between the elements
+#' of X or Y (applies only if data is a data frame).
 #' @param avg_links average number of connections for the projection of X
 #' (default set to 4)
 #' @param tolerance tolerance for proximity variation on each iteration until
-#' obtaining the desired average number of connections (default set to 0.01)
+#' obtaining the desired average number of connections (default set to 0.05)
 #' @param compute which projection to compute. By default is "both" (both
 #' projections) but it can also be "source" or "target".
 #'
@@ -46,13 +46,11 @@
 
 projections <- function(proximity_source, proximity_target,
                         source = "source", target = "target", value = "value",
-                        avg_links = 4, tolerance = 0.01, compute = "both") {
+                        avg_links = 4, tolerance = 0.05, compute = "both") {
   # sanity checks ----
-  if (all(class(proximity_source) %in% c("data.frame", "matrix", "dgeMatrix", "dgCMatrix",
-                                         "dsCMatrix") == FALSE) |
-      all(class(proximity_target) %in% c("data.frame", "matrix", "dgeMatrix", "dgCMatrix",
-                                         "dsCMatrix") == FALSE)) {
-    stop("'proximity_source' and 'proximity_target' must be data.frame or matrix")
+  if (!any(class(proximity_source) %in% "data.frame") |
+      !any(class(proximity_target) %in% "data.frame")) {
+    stop("'proximity_source' and 'proximity_target' must be data.frame")
   }
 
   if (!is.numeric(avg_links)) {
@@ -70,22 +68,6 @@ projections <- function(proximity_source, proximity_target,
   }
 
   trim_network <- function(proximity_d, avg_d) {
-    # arrange matrix ----
-    if (any(class(proximity_d) %in% c("dgeMatrix", "dgCMatrix", "dsCMatrix") == TRUE)) {
-      proximity_d <- as.matrix(proximity_d)
-    }
-
-    if (is.matrix(proximity_d)) {
-      proximity_d[upper.tri(proximity_d, diag = TRUE)] <- 0
-      row_names <- rownames(proximity_d)
-
-      proximity_d <- proximity_d %>%
-        dplyr::as_tibble() %>%
-        dplyr::mutate(from = row_names) %>%
-        tidyr::gather(!!sym(target), !!sym(value), -!!sym(source)) %>%
-        dplyr::filter(!!sym(value) > 0)
-    }
-
     # compute network ----
     proximity_d <- dplyr::mutate(proximity_d, value = -1 * !!sym(value))
 

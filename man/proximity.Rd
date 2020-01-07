@@ -15,7 +15,7 @@ proximity(
 )
 }
 \arguments{
-\item{balassa_index}{a data frame or matrix (e.g. the output from
+\item{balassa_index}{a data frame (e.g. the output from
 \code{balassa_index()}).}
 
 \item{balassa_sum_source}{numeric vector or tibble/data.frame containing the

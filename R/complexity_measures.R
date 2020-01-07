@@ -6,7 +6,7 @@
 #'
 #' @details TBD
 #'
-#' @param balassa_index a data frame or matrix (e.g. the output from
+#' @param balassa_index a data frame (e.g. the output from
 #' \code{balassa_index()}).
 #' @param source a column with the elements of set X (applies only if data is
 #' a data frame).
@@ -44,33 +44,32 @@
 complexity_measures <- function(balassa_index, source = "source", target = "target", value = "value",
                                 method = "fitness", iterations = 20, extremality = 1) {
   # sanity checks ----
-  if (all(class(balassa_index) %in% c("data.frame", "matrix", "dgeMatrix", "dsCMatrix",
-                             "dgCMatrix") == FALSE)) {
-    stop("'balassa_index' must be a data.frame or matrix")
+  if (!any(class(balassa_index) %in% "data.frame")) {
+    stop("'balassa_index' must be a data.frame")
   }
 
   if (!(any(method %in% c("fitness", "reflections", "eigenvalues")) == TRUE)) {
     stop("'method' must be 'fitness', 'reflections' or 'eigenvalues'")
   }
 
-  if (is.integer(iterations) & !iterations >= 2) {
-    stop("'iterations' must be integer and >= 2")
+  if (!is.integer(iterations)) {
+    iterations <- as.integer(iterations)
+
+    if (iterations < 2L) {
+      stop("'iterations' must be integer and >= 2")
+    }
   }
 
   # convert data.frame input to matrix ----
-  if (is.data.frame(balassa_index)) {
-    m <- tidyr::spread(balassa_index, !!sym(target), !!sym(value))
-    m_rownames <- dplyr::select(m, !!sym(source)) %>% dplyr::pull()
+  m <- tidyr::spread(balassa_index, !!sym(target), !!sym(value))
+  m_rownames <- dplyr::select(m, !!sym(source)) %>% dplyr::pull()
 
-    m <- dplyr::select(m, -!!sym(source)) %>% as.matrix()
-    m[is.na(m)] <- 0
-    rownames(m) <- m_rownames
+  m <- dplyr::select(m, -!!sym(source)) %>% as.matrix()
+  m[is.na(m)] <- 0
+  rownames(m) <- m_rownames
 
-    m <- Matrix::Matrix(m, sparse = TRUE)
-    m <- m[Matrix::rowSums(m) != 0, Matrix::colSums(m) != 0]
-  } else {
-    m <- balassa_index[Matrix::rowSums(balassa_index) != 0, Matrix::colSums(balassa_index) != 0]
-  }
+  m <- Matrix::Matrix(m, sparse = TRUE)
+  m <- m[Matrix::rowSums(m) != 0, Matrix::colSums(m) != 0]
 
   # compute complexity measures ----
   # balassa_sum_x (kx0) and balassa_sum_y (ky0)

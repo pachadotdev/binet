@@ -4,7 +4,7 @@
 #'
 #' @details TBD
 #'
-#' @param balassa_index a data frame or matrix (e.g. the output from
+#' @param balassa_index a data frame (e.g. the output from
 #' \code{balassa_index()}).
 #' @param balassa_sum_source numeric vector or tibble/data.frame containing the
 #' Balassa sum for elements of set X (e.g. \code{balassa_sum_source} from
@@ -49,9 +49,8 @@
 proximity <- function(balassa_index, balassa_sum_source, balassa_sum_target,
                       source = "source", target = "target", value = "value", compute = "both") {
   # sanity checks ----
-  if (all(class(balassa_index) %in% c("data.frame", "matrix", "dgeMatrix", "dsCMatrix",
-                               "dgCMatrix") == FALSE)) {
-    stop("'balassa_index' must be a data.frame or matrix")
+  if (!any(class(balassa_index) %in% "data.frame")) {
+    stop("'balassa_index' must be a data.frame")
   }
 
   if (all(class(balassa_sum_source) %in% c("numeric", "data.frame") == FALSE) |
@@ -59,38 +58,38 @@ proximity <- function(balassa_index, balassa_sum_source, balassa_sum_target,
     stop("'balassa_sum_source' and 'balassa_sum_target' must be data.frame or numeric")
   }
 
+  if (is.numeric(balassa_sum_source) & is.null(names(balassa_sum_source))) {
+    stop("'balassa_sum_source' cannot have NULL names")
+  }
+
+  if (is.numeric(balassa_sum_target) & is.null(names(balassa_sum_target))) {
+    stop("'balassa_sum_target' cannot have NULL names")
+  }
+
   if (!any(compute %in% c("both", "source", "target"))) {
     stop("'compute' must be 'both', 'source' or 'target'")
   }
 
   # transformations for data frame inputs ----
-  if (is.data.frame(balassa_index)) {
-    balassa_index <- dplyr::select(balassa_index, !!!syms(c(source, target, value))) %>%
-      tidyr::spread(!!sym(target), !!sym(value))
+  balassa_index <- dplyr::select(balassa_index, !!!syms(c(source, target, value))) %>%
+    tidyr::spread(!!sym(target), !!sym(value))
 
-    balassa_index_rownames <- dplyr::select(balassa_index, !!sym(source)) %>%
-      dplyr::pull()
+  balassa_index_rownames <- dplyr::select(balassa_index, !!sym(source)) %>%
+    dplyr::pull()
 
-    balassa_index <- dplyr::select(balassa_index, -!!sym(source)) %>%
-      as.matrix()
+  balassa_index <- dplyr::select(balassa_index, -!!sym(source)) %>%
+    as.matrix()
 
-    balassa_index[is.na(balassa_index)] <- 0
+  balassa_index[is.na(balassa_index)] <- 0
 
-    rownames(balassa_index) <- balassa_index_rownames
+  rownames(balassa_index) <- balassa_index_rownames
 
-    balassa_index <- Matrix::Matrix(balassa_index, sparse = TRUE)
-    balassa_index <- balassa_index[Matrix::rowSums(balassa_index) != 0, Matrix::colSums(balassa_index) != 0]
-  } else {
-    balassa_index <- balassa_index[Matrix::rowSums(balassa_index) != 0, Matrix::colSums(balassa_index) != 0]
-  }
+  balassa_index <- Matrix::Matrix(balassa_index, sparse = TRUE)
+  balassa_index <- balassa_index[Matrix::rowSums(balassa_index) != 0, Matrix::colSums(balassa_index) != 0]
 
-  if (is.data.frame(balassa_sum_source)) {
-    balassa_sum_source <- tibble::deframe(balassa_sum_source)
-  }
+  balassa_sum_source <- tibble::deframe(balassa_sum_source)
 
-  if (is.data.frame(balassa_sum_target)) {
-    balassa_sum_target <- tibble::deframe(balassa_sum_target)
-  }
+  balassa_sum_target <- tibble::deframe(balassa_sum_target)
 
   # compute proximity matrices ----
 

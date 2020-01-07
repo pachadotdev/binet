@@ -11,16 +11,16 @@ projections(
   target = "target",
   value = "value",
   avg_links = 4,
-  tolerance = 0.01,
+  tolerance = 0.05,
   compute = "both"
 )
 }
 \arguments{
-\item{proximity_source}{tibble/data.frame or sparse/dense matrix containing proximity
-measures for the elements of set X (e.g. proximity_x from \code{proximity()})}
+\item{proximity_source}{a data frame containing proximity
+values for the elements of set X (e.g. proximity_source from \code{proximity()})}
 
-\item{proximity_target}{tibble/data.frame or sparse/dense matrix containing proximity
-measures for the elements of set Y (e.g. proximity_y from \code{proximity()})}
+\item{proximity_target}{a data frame containing proximity
+values for the elements of set Y (e.g. proximity_target from \code{proximity()})}
 
 \item{source}{a column with the elements of set X (applies only if data is
 a data frame).}
@@ -28,14 +28,14 @@ a data frame).}
 \item{target}{a column with the elements of set Y (applies only if data is
 a data frame).}
 
-\item{value}{a column with some metric of the relation between the elements
-of X and Y (applies only if data is a data frame).}
+\item{value}{a column with the proximity values between the elements
+of X or Y (applies only if data is a data frame).}
 
 \item{avg_links}{average number of connections for the projection of X
 (default set to 4)}
 
 \item{tolerance}{tolerance for proximity variation on each iteration until
-obtaining the desired average number of connections (default set to 0.01)}
+obtaining the desired average number of connections (default set to 0.05)}
 
 \item{compute}{which projection to compute. By default is "both" (both
 projections) but it can also be "source" or "target".}

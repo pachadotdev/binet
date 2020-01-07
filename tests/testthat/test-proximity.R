@@ -14,34 +14,6 @@ test_that("proximity results are aligned with the expected output", {
   expect_lte(max(pr$proximity_target$value), 1)
 })
 
-test_that("proximity works with a matrix", {
-  balassa_index_m <- binet_output$balassa_index %>%
-    tidyr::spread(target, value)
-
-  balassa_index_rownames <- dplyr::select(balassa_index_m, source) %>%
-    dplyr::pull()
-
-  balassa_index_m <- dplyr::select(balassa_index_m, -source) %>% as.matrix()
-  balassa_index_m[is.na(balassa_index_m)] <- 0
-  rownames(balassa_index_m) <- balassa_index_rownames
-
-  balassa_index_m <- Matrix::Matrix(balassa_index_m, sparse = TRUE)
-
-  pr <- proximity(
-    balassa_index = balassa_index_m,
-    balassa_sum_source = binet_output$complexity_measures$balassa_sum_source,
-    balassa_sum_target = binet_output$complexity_measures$balassa_sum_target,
-  )
-
-  expect_is(pr, "list")
-  expect_equal(nrow(pr$proximity_source), 10432)
-  expect_equal(nrow(pr$proximity_target), 417822)
-  expect_gte(min(pr$proximity_source$value), 0)
-  expect_lte(max(pr$proximity_source$value), 1)
-  expect_gte(min(pr$proximity_target$value), 0)
-  expect_lte(max(pr$proximity_target$value), 1)
-})
-
 test_that("proximity returns source proximity only", {
   pr <- proximity(
     balassa_index = binet_output$balassa_index,
@@ -70,4 +42,61 @@ test_that("proximity returns target proximity only", {
   expect_equal(nrow(pr$proximity_target), 417822)
   expect_gte(min(pr$proximity_target$value), 0)
   expect_lte(max(pr$proximity_target$value), 1)
+})
+
+test_that("proximity fails with NULL balassa_index", {
+  expect_error(
+    proximity(
+      balassa_index = NULL,
+      balassa_sum_source = binet_output$complexity_measures$balassa_sum_source,
+      balassa_sum_target = binet_output$complexity_measures$balassa_sum_target
+    )
+  )
+})
+
+test_that("proximity fails with NULL names in balassa_sum_source/balassa_sum_target", {
+  expect_error(
+    proximity(
+      balassa_index = binet_output$balassa_index,
+      balassa_sum_source = as.numeric(binet_output$complexity_measures$balassa_sum_source$value),
+      balassa_sum_target = binet_output$complexity_measures$balassa_sum_target
+    )
+  )
+
+  expect_error(
+    proximity(
+      balassa_index = binet_output$balassa_index,
+      balassa_sum_source = binet_output$complexity_measures$balassa_sum_source,
+      balassa_sum_target = as.numeric(binet_output$complexity_measures$balassa_sum_target$value)
+    )
+  )
+})
+
+test_that("proximity fails with NULL balassa_sum_source/balassa_sum_target", {
+  expect_error(
+    proximity(
+      balassa_index = binet_output$balassa_index,
+      balassa_sum_source = NULL,
+      balassa_sum_target = binet_output$complexity_measures$balassa_sum_target
+    )
+  )
+
+  expect_error(
+    proximity(
+      balassa_index = binet_output$balassa_index,
+      balassa_sum_source = binet_output$complexity_measures$balassa_sum_source,
+      balassa_sum_target = NULL
+    )
+  )
+})
+
+test_that("proximity fails with NULL compute", {
+  expect_error(
+    proximity(
+      balassa_index = binet_output$balassa_index,
+      balassa_sum_source = binet_output$complexity_measures$balassa_sum_source,
+      balassa_sum_target = binet_output$complexity_measures$balassa_sum_target,
+      compute = NULL
+    )
+  )
 })

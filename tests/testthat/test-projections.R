@@ -1,5 +1,19 @@
-test_that("projection results are aligned with the expected output", {
-  # just spanning tree for speed
+test_that("projection returns a simplified network with adecuate parameters", {
+  net <- projections(
+    proximity_source = binet_output$proximity$proximity_source,
+    proximity_target = binet_output$proximity$proximity_target,
+    tolerance = 0.1,
+    avg_links = 10
+  )
+
+  expect_is(net, "list")
+  expect_equal(nrow(net$network_source), 269)
+  expect_equal(nrow(net$network_target), 3763)
+  expect_equal(ncol(net$network_source), 3)
+  expect_equal(ncol(net$network_target), 3)
+})
+
+test_that("projection returns the spanning tree with extreme parameters", {
   net <- projections(
     proximity_source = binet_output$proximity$proximity_source,
     proximity_target = binet_output$proximity$proximity_target,
@@ -12,4 +26,75 @@ test_that("projection results are aligned with the expected output", {
   expect_equal(nrow(net$network_target), 990)
   expect_equal(ncol(net$network_source), 3)
   expect_equal(ncol(net$network_target), 3)
+})
+
+test_that("projection returns source projection only", {
+  # just spanning tree for speed
+  net <- projections(
+    proximity_source = binet_output$proximity$proximity_source,
+    proximity_target = binet_output$proximity$proximity_target,
+    tolerance = 1,
+    avg_links = 1,
+    compute = "source"
+  )
+
+  expect_is(net, "list")
+  expect_equal(nrow(net$network_source), 157)
+  expect_equal(nrow(net$network_target), NULL)
+  expect_equal(ncol(net$network_source), 3)
+  expect_equal(ncol(net$network_target), NULL)
+})
+
+test_that("projection returns target projection only", {
+  # just spanning tree for speed
+  net <- projections(
+    proximity_source = binet_output$proximity$proximity_source,
+    proximity_target = binet_output$proximity$proximity_target,
+    tolerance = 1,
+    avg_links = 1,
+    compute = "target"
+  )
+
+  expect_is(net, "list")
+  expect_equal(nrow(net$network_source), NULL)
+  expect_equal(nrow(net$network_target), 990)
+  expect_equal(ncol(net$network_source), NULL)
+  expect_equal(ncol(net$network_target), 3)
+})
+
+test_that("projection fails with proximity_source/proximity_target", {
+  expect_error(
+    projections(
+      proximity_source = NULL,
+      proximity_target = binet_output$proximity$proximity_target
+    )
+  )
+
+  expect_error(
+    projections(
+      proximity_source = binet_output$proximity$proximity_source,
+      proximity_target = NULL
+    )
+  )
+})
+
+test_that("projection fails with NULL avg_links", {
+  expect_error(
+    projections(
+      proximity_source = binet_output$proximity$proximity_source,
+      proximity_target = binet_output$proximity$proximity_target,
+      avg_links = NULL
+    )
+  )
+})
+
+test_that("projection fails with NULL compute ", {
+  expect_error(
+    projections(
+      proximity_source = binet_output$proximity$proximity_source,
+      proximity_target = binet_output$proximity$proximity_target,
+      avg_links = 4,
+      compute = NULL
+    )
+  )
 })

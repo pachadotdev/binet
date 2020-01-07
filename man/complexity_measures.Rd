@@ -15,7 +15,7 @@ complexity_measures(
 )
 }
 \arguments{
-\item{balassa_index}{a data frame or matrix (e.g. the output from
+\item{balassa_index}{a data frame (e.g. the output from
 \code{balassa_index()}).}
 
 \item{source}{a column with the elements of set X (applies only if data is
