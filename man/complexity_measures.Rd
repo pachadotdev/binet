@@ -4,41 +4,41 @@
 \alias{complexity_measures}
 \title{Complexity Measures}
 \usage{
-complexity_measures(bi = NULL, x = NULL, y = NULL, v = "value",
-  method = "fitness", iterations = 20, extremality = 1, tbl = TRUE)
+complexity_measures(balassa_index, source = "source",
+  target = "target", value = "value", method = "fitness",
+  iterations = 20, extremality = 1)
 }
 \arguments{
-\item{bi}{A matrix or tibble/data.frame. You can pass the
-output of \code{balassa_index()} here or a similar data structure.}
+\item{balassa_index}{a data frame or matrix (e.g. the output from
+\code{balassa_index()}).}
 
-\item{x}{column with the elements of set X (applies only if d is a
-tibble/data.frame)}
+\item{source}{a column with the elements of set X (applies only if data is
+a data frame).}
 
-\item{y}{column with the elements of set Y (applies only if d is a
-tibble/data.frame)}
+\item{target}{a column with the elements of set Y (applies only if data is
+a data frame).}
 
-\item{v}{column with a metric of the relation between the elements of the
-sets X and Y (applies only if d is a tibble/data.frame)}
+\item{value}{a column with some metric of the relation between the elements
+of X and Y (applies only if data is a data frame).}
 
-\item{method}{string to indicate to use one of these methods: reflections,
-eigenvalues or fitness (default set to "fitness")}
+\item{method}{one of these methods: "fitness" (by default), "reflections",
+"eigenvalues".}
 
-\item{iterations}{number of iterations (default set to 20, all the methods
-use this but "eigenvalues" uses it indirectly in sign correction)}
+\item{iterations}{the number of iterations to use (default set to 20).}
 
-\item{extremality}{parameter to use in the fitness method
-(default set to 1, the other methods ignore this parameter)}
-
-\item{tbl}{when set to TRUE, the output will be a tibble instead of a
-matrix (default set to TRUE)}
+\item{extremality}{the parameter to use in the fitness method (by default is
+1). The other methods ignore this parameter.}
 }
 \description{
-Complexity Measures
+\code{complexity_measures()} computes different complexity
+measures obtained from the Balassa Index for a bipartite relation between
+two disjoint sets X (the "source" side) and Y (the "target" side).
+}
+\details{
+TBD
 }
 \examples{
-complexity_measures(
-  bi = binet_output$balassa_index, x = "country", y = "product", v = "value"
-)
+complexity_measures(balassa_index = binet_output$balassa_index)
 
 }
 \references{

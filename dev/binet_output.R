@@ -11,11 +11,10 @@ prox <- proximity(
 )
 
 proj <- projections(
-  px = pro$proximity_x,
-  py = pro$proximity_y,
-  v = "value",
-  cx = 1,
-  cy = 1
+  proximity_source = prox$proximity_source,
+  proximity_target = prox$proximity_target,
+  tolerance = 1,
+  avg_links = 1
 )
 
 binet_output <- list(

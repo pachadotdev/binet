@@ -2,40 +2,40 @@
 % Please edit documentation in R/balassa_index.R
 \name{balassa_index}
 \alias{balassa_index}
-\title{Balassa Index (or Revealed Comparative Advantage, RCA)}
+\title{Balassa Index}
 \usage{
-balassa_index(d = NULL, x = NULL, y = NULL, v = NULL, cut = 1,
-  dis = TRUE, tbl = TRUE)
+balassa_index(data, source = "source", target = "target",
+  value = "value", discrete = TRUE, cutoff = 1)
 }
 \arguments{
-\item{d}{tibble/data.frame in long format or a dense/sparse matrix}
+\item{data}{a data frame or matrix.}
 
-\item{x}{column with the elements of set X (applies only if d is a
-tibble/data.frame)}
+\item{source}{a column with the elements of set X (applies only if data is
+a data frame).}
 
-\item{y}{column with the elements of set Y (applies only if d is a
-tibble/data.frame)}
+\item{target}{a column with the elements of set Y (applies only if data is
+a data frame).}
 
-\item{v}{column with a metric of the relation between the elements of th
-sets X and Y (applies only if d is a tibble/data.frame)}
+\item{value}{a column with some metric of the relation between the elements
+of X and Y (applies only if data is a data frame).}
 
-\item{cut}{cutoff value used for discretization (default set
-to 1)}
+\item{discrete}{if \code{TRUE} the Balassa Index values are converted to
+discrete values (1/0) unless you set this to \code{FALSE}. Anything below the
+specified cutoff is converted to 0 and 1 otherwise.}
 
-\item{dis}{when set to TRUE, all the Balassa Index values are converted
-to discrete values, anything below the cutoff is converted to 0 and 1
-otherwise (default set to TRUE)}
-
-\item{tbl}{when set to TRUE, the output will be a tibble instead of a
-matrix (default set to TRUE)}
+\item{cutoff}{the cutoff value used for discretization. The default is 1 but
+it can be any numeric value.}
 }
 \description{
-Balassa Index (or Revealed Comparative Advantage, RCA)
+\code{balassa_index()} computes the Balassa Index for a
+bipartite relation between two disjoint sets X (the "source" side) and Y (the
+"target" side).
+}
+\details{
+TBD
 }
 \examples{
-balassa_index(
-  d = trade_1962, x = "country", y = "product", v = "value"
-)
+balassa_index(data = trade, value = "export_value")
 
 }
 \references{

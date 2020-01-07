@@ -1,17 +1,17 @@
 test_that("proximity results are aligned with the expected output", {
   pr <- proximity(
     balassa_index = binet_output$balassa_index,
-    balassa_sum_source = binet_output$complexity_measures$diversity,
-    balassa_sum_target = binet_output$complexity_measures$ubiquity
+    balassa_sum_source = binet_output$complexity_measures$balassa_sum_source,
+    balassa_sum_target = binet_output$complexity_measures$balassa_sum_target
   )
 
   expect_is(pr, "list")
-  expect_equal(nrow(pr$proximity_x), 10432)
-  expect_equal(nrow(pr$proximity_y), 417822)
-  expect_gte(min(pr$proximity_x$value), 0)
-  expect_lte(max(pr$proximity_x$value), 1)
-  expect_gte(min(pr$proximity_y$value), 0)
-  expect_lte(max(pr$proximity_y$value), 1)
+  expect_equal(nrow(pr$proximity_source), 10432)
+  expect_equal(nrow(pr$proximity_target), 417822)
+  expect_gte(min(pr$proximity_source$value), 0)
+  expect_lte(max(pr$proximity_source$value), 1)
+  expect_gte(min(pr$proximity_target$value), 0)
+  expect_lte(max(pr$proximity_target$value), 1)
 })
 
 test_that("proximity works with a matrix", {
@@ -37,12 +37,12 @@ test_that("proximity works with a matrix", {
   )
 
   expect_is(pr, "list")
-  expect_equal(nrow(pr$proximity_x), 158)
-  expect_equal(nrow(pr$proximity_y), 991)
-  expect_gte(min(pr$proximity_x), 0)
-  expect_lte(max(pr$proximity_x), 1)
-  expect_gte(min(pr$proximity_y), 0)
-  expect_lte(max(pr$proximity_y), 1)
+  expect_equal(nrow(pr$proximity_source), 158)
+  expect_equal(nrow(pr$proximity_target), 991)
+  expect_gte(min(pr$proximity_source), 0)
+  expect_lte(max(pr$proximity_source), 1)
+  expect_gte(min(pr$proximity_target), 0)
+  expect_lte(max(pr$proximity_target), 1)
 })
 
 test_that("proximity returns x matrix only", {
@@ -60,9 +60,9 @@ test_that("proximity returns x matrix only", {
   )
 
   expect_is(pr, "list")
-  expect_equal(nrow(pr$proximity_x), 10432)
-  expect_gte(min(pr$proximity_x$value), 0)
-  expect_lte(max(pr$proximity_x$value), 1)
+  expect_equal(nrow(pr$proximity_source), 10432)
+  expect_gte(min(pr$proximity_source$value), 0)
+  expect_lte(max(pr$proximity_source$value), 1)
 })
 
 test_that("proximity returns y matrix only", {
@@ -80,9 +80,9 @@ test_that("proximity returns y matrix only", {
   )
 
   expect_is(pr, "list")
-  expect_equal(nrow(pr$proximity_y), 417822)
-  expect_gte(min(pr$proximity_y$value), 0)
-  expect_lte(max(pr$proximity_y$value), 1)
+  expect_equal(nrow(pr$proximity_target), 417822)
+  expect_gte(min(pr$proximity_target$value), 0)
+  expect_lte(max(pr$proximity_target$value), 1)
 })
 
 test_that("proximity returns an error with vector bi", {

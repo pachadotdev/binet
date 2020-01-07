@@ -23,7 +23,7 @@
 #' @importFrom magrittr %>%
 #' @importFrom dplyr select mutate arrange pull
 #' @importFrom tidyr gather spread
-#' @importFrom tibble tibble as_tibble enframe
+#' @importFrom tibble tibble enframe
 #' @importFrom Matrix Matrix rowSums colSums t
 #' @importFrom rlang sym
 #'

@@ -4,54 +4,45 @@
 \alias{projections}
 \title{Projections of a bipartite network}
 \usage{
-projections(px = NULL, py = NULL, f = "from", t = "to",
-  v = "value", ax = 4, ay = 4, tol = 0.01, tbl = TRUE,
-  pro = "both")
+projections(proximity_source, proximity_target, source = "source",
+  target = "target", value = "value", avg_links = 4,
+  tolerance = 0.01, compute = "both")
 }
 \arguments{
-\item{px}{tibble/data.frame or sparse/dense matrix containing proximity
+\item{proximity_source}{tibble/data.frame or sparse/dense matrix containing proximity
 measures for the elements of set X (e.g. proximity_x from \code{proximity()})}
 
-\item{py}{tibble/data.frame or sparse/dense matrix containing proximity
+\item{proximity_target}{tibble/data.frame or sparse/dense matrix containing proximity
 measures for the elements of set Y (e.g. proximity_y from \code{proximity()})}
 
-\item{f}{column with the "from" side
-in a relation between elements of the same set (applies only if d is a
-tibble/data.frame)}
+\item{source}{a column with the elements of set X (applies only if data is
+a data frame).}
 
-\item{t}{column with the "to" side in a relation between elements of the same
-set (applies only if d is a tibble/data.frame)}
+\item{target}{a column with the elements of set Y (applies only if data is
+a data frame).}
 
-\item{v}{column with a metric of the relation between the elements of the
-same set (applies only if d is a tibble/data.frame)}
+\item{value}{a column with some metric of the relation between the elements
+of X and Y (applies only if data is a data frame).}
 
-\item{ax}{average number of connections for the projection of X
+\item{avg_links}{average number of connections for the projection of X
 (default set to 4)}
 
-\item{ay}{average number of connections for the projection of Y
-(default set to 4)}
-
-\item{tol}{tolerance for proximity variation on each iteration until
+\item{tolerance}{tolerance for proximity variation on each iteration until
 obtaining the desired average number of connections (default set to 0.01)}
+
+\item{compute}{which projection to compute. By default is "both" (both
+projections) but it can also be "source" or "target".}
 
 \item{tbl}{when set to TRUE the output will be a tibble instead of a
 graph (set to TRUE by default)}
-
-\item{pro}{set to compute "both" projections by default, it can also be
-"x" or "y" to obtain one projection of the bipartite network}
 }
 \description{
 Projections of a bipartite network
 }
 \examples{
 projections(
-  px = binet_output$proximity$proximity_x,
-  py = binet_output$proximity$proximity_y,
-  f = "from",
-  t = "to",
-  v = "value",
-  tol = 0.25,
-  tbl = TRUE
+  proximity_source = binet_output$proximity$proximity_x,
+  proximity_target = binet_output$proximity$proximity_y
 )
 
 }
