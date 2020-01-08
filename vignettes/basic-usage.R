@@ -85,7 +85,7 @@ net$network_source %>%
                  edge_colour = "#a8a8a8") +
   geom_node_point(color = "darkslategray4", size = 8) +
   geom_node_text(aes(label = name), vjust = 2.2) +
-  ggtitle("The Country Space") +
+  ggtitle("Country Projection") +
   theme_void()
 
 ## ---- fig.width=20, fig.height=12---------------------------------------------
@@ -96,35 +96,6 @@ net$network_target %>%
                  edge_colour = "#a8a8a8") +
   geom_node_point(color = "darkslategray4", size = 4) +
   geom_node_text(aes(label = name), vjust = 2.2) +
-  ggtitle("The Product Space") +
+  ggtitle("Product Projection") +
   theme_void()
-
-## -----------------------------------------------------------------------------
-library(binet)
-
-omim
-
-## -----------------------------------------------------------------------------
-com_fit <- complexity_measures(balassa_index = omim, value = "weight")
-
-com_fit$complexity_index_source
-com_fit$complexity_index_target
-
-## -----------------------------------------------------------------------------
-com_ref <- complexity_measures(
-  balassa_index = bi,
-  method = "reflections"
-)
-
-com_ref$complexity_index_source
-com_ref$complexity_index_target
-
-## -----------------------------------------------------------------------------
-com_eig <- complexity_measures(
-  balassa_index = bi,
-  method = "eigenvalues"
-)
-
-com_eig$complexity_index_source
-com_eig$complexity_index_target
 

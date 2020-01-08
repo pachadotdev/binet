@@ -26,7 +26,7 @@
 #' @importFrom tibble deframe
 #' @importFrom tidyr spread gather
 #' @importFrom Matrix Matrix t rowSums colSums
-#' @importFrom rlang sym syms
+#' @importFrom rlang sym syms :=
 #'
 #' @examples
 #' proximity(
@@ -118,9 +118,9 @@ proximity <- function(balassa_index, balassa_sum_source, balassa_sum_target,
 
     prox_x <- as.matrix(prox_x) %>%
       dplyr::as_tibble() %>%
-      dplyr::mutate(source = rownames(prox_x)) %>%
-      tidyr::gather(!!sym(target), !!sym(value), -!!sym(source)) %>%
-      dplyr::filter(!!sym(value) > 0)
+      dplyr::mutate(!!sym("source") := rownames(prox_x)) %>%
+      tidyr::gather(!!sym("target"), !!sym("value"), -!!sym("source")) %>%
+      dplyr::filter(!!sym("value") > 0)
   } else {
     prox_x <- NULL
   }
@@ -136,9 +136,9 @@ proximity <- function(balassa_index, balassa_sum_source, balassa_sum_target,
 
     prox_y <- as.matrix(prox_y) %>%
       dplyr::as_tibble() %>%
-      dplyr::mutate(source = rownames(prox_y)) %>%
-      tidyr::gather(!!sym(target), !!sym(value), -!!sym(source)) %>%
-      dplyr::filter(!!sym(value) > 0)
+      dplyr::mutate(!!sym("source") := rownames(prox_y)) %>%
+      tidyr::gather(!!sym("target"), !!sym("value"), -!!sym("source")) %>%
+      dplyr::filter(!!sym("value") > 0)
   } else {
     prox_y <- NULL
   }
