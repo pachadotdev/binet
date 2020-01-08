@@ -25,7 +25,7 @@
 #' @importFrom tidyr gather spread
 #' @importFrom tibble tibble enframe
 #' @importFrom Matrix Matrix rowSums colSums t
-#' @importFrom rlang sym
+#' @importFrom rlang sym syms
 #'
 #' @examples
 #' complexity_measures(balassa_index = binet_output$balassa_index)
@@ -61,7 +61,8 @@ complexity_measures <- function(balassa_index, source = "source", target = "targ
   }
 
   # convert data.frame input to matrix ----
-  m <- tidyr::spread(balassa_index, !!sym(target), !!sym(value))
+  m <- dplyr::select(balassa_index, !!!syms(c(source, target, value))) %>%
+    tidyr::spread(!!sym(target), !!sym(value))
   m_rownames <- dplyr::select(m, !!sym(source)) %>% dplyr::pull()
 
   m <- dplyr::select(m, -!!sym(source)) %>% as.matrix()
@@ -192,13 +193,13 @@ complexity_measures <- function(balassa_index, source = "source", target = "targ
 
   xci <- tibble::tibble(value = xci) %>%
     dplyr::mutate(source = names(xci)) %>%
-    dplyr::select(!!sym(source), !!sym(value)) %>%
-    dplyr::arrange(-!!sym(value))
+    dplyr::select(!!sym("source"), !!sym("value")) %>%
+    dplyr::arrange(-!!sym("value"))
 
   yci <- tibble::tibble(value = yci) %>%
     dplyr::mutate(target = names(yci)) %>%
-    dplyr::select(!!sym(target), !!sym(value)) %>%
-    dplyr::arrange(-!!sym(value))
+    dplyr::select(!!sym("target"), !!sym("value")) %>%
+    dplyr::arrange(-!!sym("value"))
 
   kx0 <- tibble::enframe(kx0, name = "source")
 

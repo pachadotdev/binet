@@ -99,3 +99,32 @@ net$network_target %>%
   ggtitle("The Product Space") +
   theme_void()
 
+## -----------------------------------------------------------------------------
+library(binet)
+
+omim
+
+## -----------------------------------------------------------------------------
+com_fit <- complexity_measures(balassa_index = omim, value = "weight")
+
+com_fit$complexity_index_source
+com_fit$complexity_index_target
+
+## -----------------------------------------------------------------------------
+com_ref <- complexity_measures(
+  balassa_index = bi,
+  method = "reflections"
+)
+
+com_ref$complexity_index_source
+com_ref$complexity_index_target
+
+## -----------------------------------------------------------------------------
+com_eig <- complexity_measures(
+  balassa_index = bi,
+  method = "eigenvalues"
+)
+
+com_eig$complexity_index_source
+com_eig$complexity_index_target
+

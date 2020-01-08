@@ -4,14 +4,8 @@
 \alias{balassa_index}
 \title{Balassa Index}
 \usage{
-balassa_index(
-  data,
-  source = "source",
-  target = "target",
-  value = "value",
-  discrete = TRUE,
-  cutoff = 1
-)
+balassa_index(data, source = "source", target = "target",
+  value = "value", discrete = TRUE, cutoff = 1)
 }
 \arguments{
 \item{data}{a data frame}
