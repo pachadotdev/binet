@@ -4,35 +4,51 @@
 \alias{balassa_index}
 \title{Balassa Index}
 \usage{
-balassa_index(data, source = "source", target = "target",
-  value = "value", discrete = TRUE, cutoff = 1)
+balassa_index(
+  data,
+  source = "source",
+  target = "target",
+  value = "value",
+  discrete = TRUE,
+  cutoff = 1
+)
 }
 \arguments{
-\item{data}{a data frame}
+\item{data}{(Type: data.frame) a demo datasets such as \code{trade}
+or \code{omim} from this package or any arrangement with a bipartite
+relation.}
 
-\item{source}{a column with the elements of set X (applies only if data is
-a data frame).}
+\item{source}{(Type: character) the column with the elements of set X.
+By default this is set to \code{"source"}.}
 
-\item{target}{a column with the elements of set Y (applies only if data is
-a data frame).}
+\item{target}{(Type: character) the column with the elements of set Y.
+By default this is set to \code{"target"}.}
 
-\item{value}{a column with some metric of the relation between the elements
-of X and Y (applies only if data is a data frame).}
+\item{value}{(Type: character) the column with the binary expression for the
+Balassa Index.
+By default this is set to \code{"value"}.}
 
-\item{discrete}{if \code{TRUE} the Balassa Index values are converted to
-discrete values (1/0) unless you set this to \code{FALSE}. Anything below the
-specified cutoff is converted to 0 and 1 otherwise.}
+\item{discrete}{(Type: logical) whether converting the Balassa Index to
+discrete (0/1) values. Anything below the specified cutoff is converted to 0
+and 1 otherwise. By default this is set to \code{TRUE}.}
 
-\item{cutoff}{the cutoff value used for discretization. The default is 1 but
-it can be any numeric value.}
+\item{cutoff}{(Type: numeric) the cutoff to use for discretization.
+By default this is set to \code{1}.}
+}
+\value{
+A data.frame with the Balassa Index.
 }
 \description{
 \code{balassa_index()} computes the Balassa Index for a
-bipartite relation between two disjoint sets X (the "source" side) and Y (the
-"target" side).
+bipartite relation between two disjoint sets X, the "source" or "from" side,
+and Y, the "target" or "to" side.
 }
 \details{
-TBD
+The current implementation follows
+\insertCite{measuringcomplexity2015}{binet} to obtain a metric for
+specialisation. In the context of international trade, if the Balassa Index
+for a country-product pair is more than 1, it means that country is
+specialized in that product.
 }
 \examples{
 balassa_index(

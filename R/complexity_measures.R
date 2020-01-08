@@ -1,31 +1,41 @@
 #' Complexity Measures
 #'
 #' @description \code{complexity_measures()} computes different complexity
-#' measures obtained from the Balassa Index for a bipartite relation between
-#' two disjoint sets X (the "source" side) and Y (the "target" side).
+#' measures obtained from the Balassa Index or a binary (0/1) metric for a
+#' bipartite relation between two disjoint sets X, the "source" or "from" side,
+#' and Y, the "target" or "to" side.
 #'
-#' @details TBD
+#' @details The current implementation follows
+#' \insertCite{measuringcomplexity2015}{binet} to obtain different metrics
+#' that account for diversification in bipartite relations.
 #'
-#' @param balassa_index a data frame (e.g. the output from
-#' \code{balassa_index()}).
-#' @param source a column with the elements of set X (applies only if data is
-#' a data frame).
-#' @param target a column with the elements of set Y (applies only if data is
-#' a data frame).
-#' @param value a column with some metric of the relation between the elements
-#' of X and Y (applies only if data is a data frame).
-#' @param method one of these methods: "fitness" (by default), "reflections",
-#' "eigenvalues".
-#' @param iterations the number of iterations to use (default set to 20).
-#' @param extremality the parameter to use in the fitness method (by default is
-#' 1). The other methods ignore this parameter.
+#' @return A list of four data frames. Two complexity indexes that are
+#' ordering rankings for specialization and two aggregations (sums) of
+#' the Balassa Index.
+#'
+#' @param balassa_index (Type: data.frame) the output from
+#' \code{balassa_index()}) or an equivalent arrangement.
+#' @param source (Type: character) the column with the elements of set X.
+#' By default this is set to \code{"source"}.
+#' @param target (Type: character) the column with the elements of set Y.
+#' By default this is set to \code{"target"}.
+#' @param value (Type: character) the column with the binary expression for the
+#' Balassa Index.
+#' By default this is set to \code{"value"}.
+#' @param method (Type: character) one of these methods: fitness,
+#' reflections or eigenvalues. By default this is set to \code{"fitness"}.
+#' @param iterations (Type: numeric) the number of iterations to use.
+#' By default this is set to \code{20}.
+#' @param extremality (Type: numeric) the parameter to use in the fitness
+#' method. The other methods don't use this parameter.
+#' By default this is set to \code{1}.
 #'
 #' @importFrom magrittr %>%
 #' @importFrom dplyr select mutate arrange pull
 #' @importFrom tidyr gather spread
 #' @importFrom tibble tibble enframe
 #' @importFrom Matrix Matrix rowSums colSums t
-#' @importFrom rlang sym syms
+#' @importFrom rlang sym syms :=
 #'
 #' @examples
 #' complexity_measures(balassa_index = binet_output$balassa_index)
@@ -192,12 +202,12 @@ complexity_measures <- function(balassa_index, source = "source", target = "targ
   }
 
   xci <- tibble::tibble(value = xci) %>%
-    dplyr::mutate(source = names(xci)) %>%
+    dplyr::mutate(!!sym("source") := names(xci)) %>%
     dplyr::select(!!sym("source"), !!sym("value")) %>%
     dplyr::arrange(-!!sym("value"))
 
   yci <- tibble::tibble(value = yci) %>%
-    dplyr::mutate(target = names(yci)) %>%
+    dplyr::mutate(!!sym("target") := names(yci)) %>%
     dplyr::select(!!sym("target"), !!sym("value")) %>%
     dplyr::arrange(-!!sym("value"))
 

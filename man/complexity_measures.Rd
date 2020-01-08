@@ -4,38 +4,55 @@
 \alias{complexity_measures}
 \title{Complexity Measures}
 \usage{
-complexity_measures(balassa_index, source = "source",
-  target = "target", value = "value", method = "fitness",
-  iterations = 20, extremality = 1)
+complexity_measures(
+  balassa_index,
+  source = "source",
+  target = "target",
+  value = "value",
+  method = "fitness",
+  iterations = 20,
+  extremality = 1
+)
 }
 \arguments{
-\item{balassa_index}{a data frame (e.g. the output from
-\code{balassa_index()}).}
+\item{balassa_index}{(Type: data.frame) the output from
+\code{balassa_index()}) or an equivalent arrangement.}
 
-\item{source}{a column with the elements of set X (applies only if data is
-a data frame).}
+\item{source}{(Type: character) the column with the elements of set X.
+By default this is set to \code{"source"}.}
 
-\item{target}{a column with the elements of set Y (applies only if data is
-a data frame).}
+\item{target}{(Type: character) the column with the elements of set Y.
+By default this is set to \code{"target"}.}
 
-\item{value}{a column with some metric of the relation between the elements
-of X and Y (applies only if data is a data frame).}
+\item{value}{(Type: character) the column with the binary expression for the
+Balassa Index.
+By default this is set to \code{"value"}.}
 
-\item{method}{one of these methods: "fitness" (by default), "reflections",
-"eigenvalues".}
+\item{method}{(Type: character) one of these methods: fitness,
+reflections or eigenvalues. By default this is set to \code{"fitness"}.}
 
-\item{iterations}{the number of iterations to use (default set to 20).}
+\item{iterations}{(Type: numeric) the number of iterations to use.
+By default this is set to \code{20}.}
 
-\item{extremality}{the parameter to use in the fitness method (by default is
-1). The other methods ignore this parameter.}
+\item{extremality}{(Type: numeric) the parameter to use in the fitness
+method. The other methods don't use this parameter.
+By default this is set to \code{1}.}
+}
+\value{
+A list of four data frames. Two complexity indexes that are
+ordering rankings for specialization and two aggregations (sums) of
+the Balassa Index.
 }
 \description{
 \code{complexity_measures()} computes different complexity
-measures obtained from the Balassa Index for a bipartite relation between
-two disjoint sets X (the "source" side) and Y (the "target" side).
+measures obtained from the Balassa Index or a binary (0/1) metric for a
+bipartite relation between two disjoint sets X, the "source" or "from" side,
+and Y, the "target" or "to" side.
 }
 \details{
-TBD
+The current implementation follows
+\insertCite{measuringcomplexity2015}{binet} to obtain different metrics
+that account for diversification in bipartite relations.
 }
 \examples{
 complexity_measures(balassa_index = binet_output$balassa_index)

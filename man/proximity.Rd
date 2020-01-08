@@ -4,9 +4,15 @@
 \alias{proximity}
 \title{Proximity}
 \usage{
-proximity(balassa_index, balassa_sum_source, balassa_sum_target,
-  source = "source", target = "target", value = "value",
-  compute = "both")
+proximity(
+  balassa_index,
+  balassa_sum_source,
+  balassa_sum_target,
+  source = "source",
+  target = "target",
+  value = "value",
+  compute = "both"
+)
 }
 \arguments{
 \item{balassa_index}{a data frame (e.g. the output from

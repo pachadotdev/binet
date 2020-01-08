@@ -35,7 +35,7 @@ jobs:
       - name: Ensure that tex has all the correct packages
         if: contains(matrix.config.args, 'no-manual') == false
         run: |
-          tlmgr install gettitlestring
+          tlmgr install cm-super
 
       - name: Install system dependencies
         if: runner.os == 'Linux'

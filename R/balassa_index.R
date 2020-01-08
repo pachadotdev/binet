@@ -1,23 +1,32 @@
 #' Balassa Index
 #'
 #' @description \code{balassa_index()} computes the Balassa Index for a
-#' bipartite relation between two disjoint sets X (the "source" side) and Y (the
-#' "target" side).
+#' bipartite relation between two disjoint sets X, the "source" or "from" side,
+#' and Y, the "target" or "to" side.
 #'
-#' @details TBD
+#' @details The current implementation follows
+#' \insertCite{measuringcomplexity2015}{binet} to obtain a metric for
+#' specialisation. In the context of international trade, if the Balassa Index
+#' for a country-product pair is more than 1, it means that country is
+#' specialized in that product.
 #'
-#' @param data a data frame
-#' @param source a column with the elements of set X (applies only if data is
-#' a data frame).
-#' @param target a column with the elements of set Y (applies only if data is
-#' a data frame).
-#' @param value a column with some metric of the relation between the elements
-#' of X and Y (applies only if data is a data frame).
-#' @param discrete if \code{TRUE} the Balassa Index values are converted to
-#' discrete values (1/0) unless you set this to \code{FALSE}. Anything below the
-#' specified cutoff is converted to 0 and 1 otherwise.
-#' @param cutoff the cutoff value used for discretization. The default is 1 but
-#' it can be any numeric value.
+#' @return A data.frame with the Balassa Index.
+#'
+#' @param data (Type: data.frame) a demo datasets such as \code{trade}
+#' or \code{omim} from this package or any arrangement with a bipartite
+#' relation.
+#' @param source (Type: character) the column with the elements of set X.
+#' By default this is set to \code{"source"}.
+#' @param target (Type: character) the column with the elements of set Y.
+#' By default this is set to \code{"target"}.
+#' @param value (Type: character) the column with the binary expression for the
+#' Balassa Index.
+#' By default this is set to \code{"value"}.
+#' @param discrete (Type: logical) whether converting the Balassa Index to
+#' discrete (0/1) values. Anything below the specified cutoff is converted to 0
+#' and 1 otherwise. By default this is set to \code{TRUE}.
+#' @param cutoff (Type: numeric) the cutoff to use for discretization.
+#' By default this is set to \code{1}.
 #'
 #' @importFrom magrittr %>%
 #' @importFrom dplyr select group_by ungroup mutate summarise matches
