@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Example outputs of the functions within the package — binet_output • binet</title>
+<title>World trade in 1962 — trade • binet</title>
 
 
 <!-- jquery -->
@@ -35,9 +35,9 @@
 
 
 
-<meta property="og:title" content="Example outputs of the functions within the package — binet_output" />
-<meta property="og:description" content="List of different economic complexity computations obtained by using the functions within the
-package. The output is provided as a list of tibbles." />
+<meta property="og:title" content="World trade in 1962 — trade" />
+<meta property="og:description" content="Example dataset with countries and the products they export. The exports are
+grouped to four digits HS 2007 codes." />
 <meta name="twitter:card" content="summary" />
 
 
@@ -113,70 +113,54 @@ package. The output is provided as a list of tibbles." />
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Example outputs of the functions within the package</h1>
+    <h1>World trade in 1962</h1>
     
-    <div class="hidden name"><code>binet_output.Rd</code></div>
+    <div class="hidden name"><code>trade.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>List of different economic complexity computations obtained by using the functions within the
-package. The output is provided as a list of tibbles.</p>
+    <p>Example dataset with countries and the products they export. The exports are
+grouped to four digits HS 2007 codes.</p>
     </div>
 
-    <pre class="usage"><span class='no'>binet_output</span></pre>
+    <pre class="usage"><span class='no'>trade</span></pre>
 
 
     <h2 class="hasAnchor" id="format"><a class="anchor" href="#format"></a>Format</h2>
 
-    <p>The format is:
-List of 3
- $ rca_tbl                :Classes ‘tbl_df’, ‘tbl’ and 'data.frame':	44435 obs. of  3 variables:
-  ..$ country: chr [1:44435] "afg" "afg" "afg" "afg" ...
-  ..$ product: chr [1:44435] "0106" "0405" "0407" "0501" ...
-  ..$ value  : num [1:44435] 0 0 0 1 1 0 0 1 1 1 ...
- $ complexity_measures_tbl:List of 4
-  ..$ complexity_index_c:Classes ‘tbl_df’, ‘tbl’ and 'data.frame':	99 obs. of  2 variables:
-  .. ..$ country: chr [1:99] "deu" "fra" "usa" "gbr" ...
-  .. ..$ value  : num [1:99] 19.47 11.99 11.55 8.43 6.92 ...
-  ..$ complexity_index_p:Classes ‘tbl_df’, ‘tbl’ and 'data.frame':	991 obs. of  2 variables:
-  .. ..$ product: chr [1:991] "2702" "7111" "2850" "8804" ...
-  .. ..$ value  : num [1:991] 48.1 48.1 29.7 18.4 17.9 ...
-  ..$ diversity         :Classes ‘tbl_df’, ‘tbl’ and 'data.frame':	99 obs. of  2 variables:
-  .. ..$ country: chr [1:99] "ago" "alb" "are" "arg" ...
-  .. ..$ value  : num [1:99] 52 32 1 83 81 290 320 127 27 70 ...
-  ..$ ubiquity          :Classes ‘tbl_df’, ‘tbl’ and 'data.frame':	991 obs. of  2 variables:
-  .. ..$ product: chr [1:991] "0101" "0102" "0103" "0104" ...
-  .. ..$ value  : num [1:991] 13 19 13 12 9 27 17 12 4 10 ...
- $ proximity_tbl          :List of 2
-  ..$ proximity_c:Classes ‘tbl_df’, ‘tbl’ and 'data.frame':	4484 obs. of  3 variables:
-  .. ..$ from : chr [1:4484] "alb" "are" "arg" "aus" ...
-  .. ..$ to   : chr [1:4484] "ago" "ago" "ago" "ago" ...
-  .. ..$ value: num [1:4484] 0.0769 0.0192 0.1325 0.0741 0.0241 ...
-  ..$ proximity_p:Classes ‘tbl_df’, ‘tbl’ and 'data.frame':	408869 obs. of  3 variables:
-  .. ..$ from : chr [1:408869] "0102" "0103" "0104" "0106" ...
-  .. ..$ to   : chr [1:408869] "0101" "0101" "0101" "0101" ...
-  .. ..$ value: num [1:408869] 0.316 0.308 0.385 0.148 0.353 ...</p>
+    <p>A data frame with 44435 observations on the following 3 variables.</p><dl class='dl-horizontal'>
+    <dt><code>country</code></dt><dd><p>a character vector</p></dd>
+    <dt><code>product</code></dt><dd><p>a character vector</p></dd>
+    <dt><code>export_value</code></dt><dd><p>a numeric vector</p></dd>
+  
+</dl>
+
+    <h2 class="hasAnchor" id="source"><a class="anchor" href="#source"></a>Source</h2>
+
+    <p>Open Trade Statistics</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='no'>binet_output</span>$<span class='no'>balassa_index</span></div><div class='output co'>#&gt; <span style='color: #555555;'># A tibble: 44,435 x 3</span><span>
-#&gt;    source target value
-#&gt;    </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span>  </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span>  </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span>
-#&gt; </span><span style='color: #555555;'> 1</span><span> afg    0106       0
-#&gt; </span><span style='color: #555555;'> 2</span><span> afg    0405       0
-#&gt; </span><span style='color: #555555;'> 3</span><span> afg    0407       0
-#&gt; </span><span style='color: #555555;'> 4</span><span> afg    0501       1
-#&gt; </span><span style='color: #555555;'> 5</span><span> afg    0504       1
-#&gt; </span><span style='color: #555555;'> 6</span><span> afg    0703       0
-#&gt; </span><span style='color: #555555;'> 7</span><span> afg    0712       0
-#&gt; </span><span style='color: #555555;'> 8</span><span> afg    0714       1
-#&gt; </span><span style='color: #555555;'> 9</span><span> afg    0801       1
-#&gt; </span><span style='color: #555555;'>10</span><span> afg    0802       1
-#&gt; </span><span style='color: #555555;'># … with 44,425 more rows</span><span></div><div class='input'><span class='no'>binet_output</span>$<span class='no'>complexity_measures</span>$<span class='no'>complexity_index_x</span></div><div class='output co'>#&gt; NULL</div></span></pre>
+    <pre class="examples"><div class='input'><span class='no'>trade</span></div><div class='output co'>#&gt; <span style='color: #555555;'># A tibble: 44,435 x 3</span><span>
+#&gt; </span><span style='color: #555555;'># Groups:   reporter_iso [158]</span><span>
+#&gt;    country product export_value
+#&gt;    </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span>   </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span>          </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span>
+#&gt; </span><span style='color: #555555;'> 1</span><span> afg     0106             621
+#&gt; </span><span style='color: #555555;'> 2</span><span> afg     0405            </span><span style='text-decoration: underline;'>3</span><span>380
+#&gt; </span><span style='color: #555555;'> 3</span><span> afg     0407           </span><span style='text-decoration: underline;'>60</span><span>807
+#&gt; </span><span style='color: #555555;'> 4</span><span> afg     0501         1</span><span style='text-decoration: underline;'>466</span><span>840
+#&gt; </span><span style='color: #555555;'> 5</span><span> afg     0504         1</span><span style='text-decoration: underline;'>466</span><span>840
+#&gt; </span><span style='color: #555555;'> 6</span><span> afg     0703           </span><span style='text-decoration: underline;'>85</span><span>258
+#&gt; </span><span style='color: #555555;'> 7</span><span> afg     0712            </span><span style='text-decoration: underline;'>9</span><span>057
+#&gt; </span><span style='color: #555555;'> 8</span><span> afg     0714          </span><span style='text-decoration: underline;'>164</span><span>694
+#&gt; </span><span style='color: #555555;'> 9</span><span> afg     0801         8</span><span style='text-decoration: underline;'>482</span><span>381
+#&gt; </span><span style='color: #555555;'>10</span><span> afg     0802         8</span><span style='text-decoration: underline;'>437</span><span>060
+#&gt; </span><span style='color: #555555;'># … with 44,425 more rows</span><span></div></span></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
     <ul class="nav nav-pills nav-stacked">
       <li><a href="#format">Format</a></li>
+      <li><a href="#source">Source</a></li>
       <li><a href="#examples">Examples</a></li>
     </ul>
 

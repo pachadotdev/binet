@@ -31,11 +31,10 @@
 #' By default this is set to \code{1}.
 #'
 #' @importFrom magrittr %>%
-#' @importFrom dplyr select mutate arrange pull
-#' @importFrom tidyr gather spread
+#' @importFrom dplyr mutate_if arrange
 #' @importFrom tibble tibble enframe
-#' @importFrom Matrix Matrix rowSums colSums t
-#' @importFrom rlang sym syms :=
+#' @importFrom Matrix Matrix sparseMatrix rowSums colSums t
+#' @importFrom rlang sym
 #'
 #' @examples
 #' complexity_measures(balassa_index = binet_output$balassa_index)
@@ -71,16 +70,18 @@ complexity_measures <- function(balassa_index, source = "source", target = "targ
   }
 
   # convert data.frame input to matrix ----
-  m <- dplyr::select(balassa_index, !!!syms(c(source, target, value))) %>%
-    tidyr::spread(!!sym(target), !!sym(value))
-  m_rownames <- dplyr::select(m, !!sym(source)) %>% dplyr::pull()
+  balassa_index <- balassa_index %>%
+    dplyr::mutate_if(is.character, as.factor)
 
-  m <- dplyr::select(m, -!!sym(source)) %>% as.matrix()
-  m[is.na(m)] <- 0
-  rownames(m) <- m_rownames
-
-  m <- Matrix::Matrix(m, sparse = TRUE)
-  m <- m[Matrix::rowSums(m) != 0, Matrix::colSums(m) != 0]
+  m <- with(
+    balassa_index,
+    Matrix::sparseMatrix(
+      i = as.numeric(source),
+      j = as.numeric(target),
+      x = value,
+      dimnames = list(levels(source), levels(target))
+    )
+  )
 
   # compute complexity measures ----
   # balassa_sum_x (kx0) and balassa_sum_y (ky0)
@@ -201,14 +202,10 @@ complexity_measures <- function(balassa_index, source = "source", target = "targ
     names(yci) <- colnames(m)
   }
 
-  xci <- tibble::tibble(value = xci) %>%
-    dplyr::mutate(!!sym("source") := names(xci)) %>%
-    dplyr::select(!!sym("source"), !!sym("value")) %>%
+  xci <- tibble::tibble(source = names(xci), value = xci) %>%
     dplyr::arrange(-!!sym("value"))
 
-  yci <- tibble::tibble(value = yci) %>%
-    dplyr::mutate(!!sym("target") := names(yci)) %>%
-    dplyr::select(!!sym("target"), !!sym("value")) %>%
+  yci <- tibble::tibble(target = names(yci), value = yci) %>%
     dplyr::arrange(-!!sym("value"))
 
   kx0 <- tibble::enframe(kx0, name = "source")

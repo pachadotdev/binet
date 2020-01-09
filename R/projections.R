@@ -22,8 +22,7 @@
 #' projections) but it can also be "source" or "target".
 #'
 #' @importFrom magrittr %>%
-#' @importFrom dplyr as_tibble filter mutate bind_rows
-#' @importFrom tidyr gather
+#' @importFrom dplyr as_tibble filter mutate mutate_if bind_rows
 #' @importFrom igraph graph_from_data_frame mst as_data_frame simplify degree
 #' @importFrom rlang sym
 #'
@@ -69,7 +68,9 @@ projections <- function(proximity_source, proximity_target,
 
   trim_network <- function(proximity_d, avg_d) {
     # compute network ----
-    proximity_d <- dplyr::mutate(proximity_d, value = -1 * !!sym(value))
+    proximity_d <- proximity_d %>%
+      dplyr::mutate(value = -1 * !!sym(value)) %>%
+      dplyr::mutate_if(is.factor, as.character)
 
     proximity_g <- igraph::graph_from_data_frame(proximity_d, directed = FALSE)
 
@@ -86,8 +87,7 @@ projections <- function(proximity_source, proximity_target,
 
     while(avg_links_n == FALSE) {
       if (threshold <= -1) {
-        message("no threshold achieves the avg number of connections")
-        message("returning maximum spanning tree")
+        warning("no threshold achieves the avg number of connections\nreturning maximum spanning tree")
         proximity_g <- dplyr::mutate(proximity_mst, value = -1 * !!sym(value))
         proximity_g <- igraph::graph_from_data_frame(proximity_g, directed = FALSE)
         avg_links_n <- TRUE
@@ -126,7 +126,8 @@ projections <- function(proximity_source, proximity_target,
     message("computing target projection...")
     message(rep("-", 50))
     xg <- trim_network(proximity_source, avg_links)
-    xg <- igraph::as_data_frame(xg) %>% dplyr::as_tibble()
+    xg <- igraph::as_data_frame(xg) %>%
+      dplyr::as_tibble()
   } else {
     xg <- NULL
   }
@@ -135,7 +136,8 @@ projections <- function(proximity_source, proximity_target,
     message("computing target projection...")
     message(rep("-", 50))
     yg <- trim_network(proximity_target, avg_links)
-    yg <- igraph::as_data_frame(yg) %>% dplyr::as_tibble()
+    yg <- igraph::as_data_frame(yg) %>%
+      dplyr::as_tibble()
   } else {
     yg <- NULL
   }

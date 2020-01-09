@@ -30,10 +30,8 @@
 #'
 #' @importFrom magrittr %>%
 #' @importFrom dplyr select group_by ungroup mutate summarise matches
-#' pull as_tibble if_else
-#' @importFrom tidyr spread gather
-#' @importFrom Matrix Matrix rowSums colSums t
-#' @importFrom rlang sym syms :=
+#' if_else
+#' @importFrom rlang sym syms
 #'
 #' @examples
 #' balassa_index(
@@ -73,7 +71,7 @@ balassa_index <- function(data, source = "source", target = "target", value = "v
     stop("'cutoff' must be numeric")
   }
 
-  # aggregate input by x and y ----
+  # aggregate input by X and Y ----
   data <- data %>%
     # Sum by x and y
     dplyr::group_by(!!!syms(c(source, target))) %>%
@@ -83,11 +81,11 @@ balassa_index <- function(data, source = "source", target = "target", value = "v
 
   # compute RCA in tibble form ----
   data <- data %>%
-    # Sum by x
+    # Sum by X
     dplyr::group_by(!!sym(source)) %>%
     dplyr::mutate(sum_x_vxy = sum(!!sym("vxy"), na.rm = TRUE)) %>%
 
-    # Sum by y
+    # Sum by Y
     dplyr::group_by(!!sym(target)) %>%
     dplyr::mutate(sum_y_vxy = sum(!!sym("vxy"), na.rm = TRUE)) %>%
 
@@ -101,7 +99,7 @@ balassa_index <- function(data, source = "source", target = "target", value = "v
 
   if (discrete == TRUE) {
     data <- data %>%
-      dplyr::mutate(!!sym("value") := dplyr::if_else(!!sym("value") > cutoff, 1, 0))
+      dplyr::mutate(value = dplyr::if_else(!!sym("value") > cutoff, 1, 0))
   }
 
   names(data) <- c("source", "target", "value")

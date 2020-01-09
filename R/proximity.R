@@ -22,11 +22,10 @@
 #' proximities) but it can also be "source" or "target".
 #'
 #' @importFrom magrittr %>%
-#' @importFrom dplyr as_tibble select filter mutate pull
-#' @importFrom tibble deframe
-#' @importFrom tidyr spread gather
+#' @importFrom dplyr select filter mutate mutate_if
+#' @importFrom tibble as_tibble deframe
 #' @importFrom Matrix Matrix t rowSums colSums
-#' @importFrom rlang sym syms :=
+#' @importFrom rlang sym
 #'
 #' @examples
 #' proximity(
@@ -71,20 +70,19 @@ proximity <- function(balassa_index, balassa_sum_source, balassa_sum_target,
   }
 
   # transformations for data frame inputs ----
-  balassa_index <- dplyr::select(balassa_index, !!!syms(c(source, target, value))) %>%
-    tidyr::spread(!!sym(target), !!sym(value))
+  balassa_index <- balassa_index %>%
+    dplyr::mutate_if(is.character, as.factor)
 
-  balassa_index_rownames <- dplyr::select(balassa_index, !!sym(source)) %>%
-    dplyr::pull()
+  balassa_index <- with(
+    balassa_index,
+    Matrix::sparseMatrix(
+      i = as.numeric(source),
+      j = as.numeric(target),
+      x = value,
+      dimnames = list(levels(source), levels(target))
+    )
+  )
 
-  balassa_index <- dplyr::select(balassa_index, -!!sym(source)) %>%
-    as.matrix()
-
-  balassa_index[is.na(balassa_index)] <- 0
-
-  rownames(balassa_index) <- balassa_index_rownames
-
-  balassa_index <- Matrix::Matrix(balassa_index, sparse = TRUE)
   balassa_index <- balassa_index[Matrix::rowSums(balassa_index) != 0, Matrix::colSums(balassa_index) != 0]
 
   balassa_sum_source <- tibble::deframe(balassa_sum_source)
@@ -116,10 +114,16 @@ proximity <- function(balassa_index, balassa_sum_source, balassa_sum_target,
 
     prox_x[upper.tri(prox_x, diag = TRUE)] <- 0
 
-    prox_x <- as.matrix(prox_x) %>%
-      dplyr::as_tibble() %>%
-      dplyr::mutate(!!sym("source") := rownames(prox_x)) %>%
-      tidyr::gather(!!sym("target"), !!sym("value"), -!!sym("source")) %>%
+    prox_x <- prox_x %>%
+      as.matrix() %>%
+      as.table() %>%
+      as.data.frame()
+
+    names(prox_x) <- c("source", "target", "value")
+
+    prox_x <- prox_x %>%
+      tibble::as_tibble() %>%
+      dplyr::mutate_if(is.factor, as.character) %>%
       dplyr::filter(!!sym("value") > 0)
   } else {
     prox_x <- NULL
@@ -134,10 +138,16 @@ proximity <- function(balassa_index, balassa_sum_source, balassa_sum_target,
 
     prox_y[upper.tri(prox_y, diag = TRUE)] <- 0
 
-    prox_y <- as.matrix(prox_y) %>%
-      dplyr::as_tibble() %>%
-      dplyr::mutate(!!sym("source") := rownames(prox_y)) %>%
-      tidyr::gather(!!sym("target"), !!sym("value"), -!!sym("source")) %>%
+    prox_y <- prox_y %>%
+      as.matrix() %>%
+      as.table() %>%
+      as.data.frame()
+
+    names(prox_y) <- c("source", "target", "value")
+
+    prox_y <- prox_y %>%
+      tibble::as_tibble() %>%
+      dplyr::mutate_if(is.factor, as.character) %>%
       dplyr::filter(!!sym("value") > 0)
   } else {
     prox_y <- NULL

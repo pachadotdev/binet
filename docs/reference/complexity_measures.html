@@ -36,7 +36,10 @@
 
 
 <meta property="og:title" content="Complexity Measures — complexity_measures" />
-<meta property="og:description" content="Complexity Measures" />
+<meta property="og:description" content="complexity_measures() computes different complexity
+measures obtained from the Balassa Index or a binary (0/1) metric for a
+bipartite relation between two disjoint sets X, the &quot;source&quot; or &quot;from&quot; side,
+and Y, the &quot;target&quot; or &quot;to&quot; side." />
 <meta name="twitter:card" content="summary" />
 
 
@@ -118,57 +121,75 @@
     </div>
 
     <div class="ref-description">
-    <p>Complexity Measures</p>
+    <p><code>complexity_measures()</code> computes different complexity
+measures obtained from the Balassa Index or a binary (0/1) metric for a
+bipartite relation between two disjoint sets X, the "source" or "from" side,
+and Y, the "target" or "to" side.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>complexity_measures</span>(<span class='kw'>bi</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>x</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>y</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>v</span> <span class='kw'>=</span> <span class='st'>"value"</span>,
-  <span class='kw'>method</span> <span class='kw'>=</span> <span class='st'>"fitness"</span>, <span class='kw'>iterations</span> <span class='kw'>=</span> <span class='fl'>20</span>, <span class='kw'>extremality</span> <span class='kw'>=</span> <span class='fl'>1</span>, <span class='kw'>tbl</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)</pre>
+    <pre class="usage"><span class='fu'>complexity_measures</span>(
+  <span class='no'>balassa_index</span>,
+  <span class='kw'>source</span> <span class='kw'>=</span> <span class='st'>"source"</span>,
+  <span class='kw'>target</span> <span class='kw'>=</span> <span class='st'>"target"</span>,
+  <span class='kw'>value</span> <span class='kw'>=</span> <span class='st'>"value"</span>,
+  <span class='kw'>method</span> <span class='kw'>=</span> <span class='st'>"fitness"</span>,
+  <span class='kw'>iterations</span> <span class='kw'>=</span> <span class='fl'>20</span>,
+  <span class='kw'>extremality</span> <span class='kw'>=</span> <span class='fl'>1</span>
+)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>bi</th>
-      <td><p>A matrix or tibble/data.frame. You can pass the
-output of <code><a href='balassa_index.html'>balassa_index()</a></code> here or a similar data structure.</p></td>
+      <th>balassa_index</th>
+      <td><p>(Type: data.frame) the output from
+<code><a href='balassa_index.html'>balassa_index()</a></code>) or an equivalent arrangement.</p></td>
     </tr>
     <tr>
-      <th>x</th>
-      <td><p>column with the elements of set X (applies only if d is a
-tibble/data.frame)</p></td>
+      <th>source</th>
+      <td><p>(Type: character) the column with the elements of set X.
+By default this is set to <code>"source"</code>.</p></td>
     </tr>
     <tr>
-      <th>y</th>
-      <td><p>column with the elements of set Y (applies only if d is a
-tibble/data.frame)</p></td>
+      <th>target</th>
+      <td><p>(Type: character) the column with the elements of set Y.
+By default this is set to <code>"target"</code>.</p></td>
     </tr>
     <tr>
-      <th>v</th>
-      <td><p>column with a metric of the relation between the elements of the
-sets X and Y (applies only if d is a tibble/data.frame)</p></td>
+      <th>value</th>
+      <td><p>(Type: character) the column with the binary expression for the
+Balassa Index.
+By default this is set to <code>"value"</code>.</p></td>
     </tr>
     <tr>
       <th>method</th>
-      <td><p>string to indicate to use one of these methods: reflections,
-eigenvalues or fitness (default set to "fitness")</p></td>
+      <td><p>(Type: character) one of these methods: fitness,
+reflections or eigenvalues. By default this is set to <code>"fitness"</code>.</p></td>
     </tr>
     <tr>
       <th>iterations</th>
-      <td><p>number of iterations (default set to 20, all the methods
-use this but "eigenvalues" uses it indirectly in sign correction)</p></td>
+      <td><p>(Type: numeric) the number of iterations to use.
+By default this is set to <code>20</code>.</p></td>
     </tr>
     <tr>
       <th>extremality</th>
-      <td><p>parameter to use in the fitness method
-(default set to 1, the other methods ignore this parameter)</p></td>
-    </tr>
-    <tr>
-      <th>tbl</th>
-      <td><p>when set to TRUE, the output will be a tibble instead of a
-matrix (default set to TRUE)</p></td>
+      <td><p>(Type: numeric) the parameter to use in the fitness
+method. The other methods don't use this parameter.
+By default this is set to <code>1</code>.</p></td>
     </tr>
     </table>
 
+    <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
+
+    <p>A list of four data frames. Two complexity indexes that are
+ordering rankings for specialization and two aggregations (sums) of
+the Balassa Index.</p>
+    <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
+
+    <p>The current implementation follows
+(Mariani et al. 2015)
+ to obtain different metrics
+that account for diversification in bipartite relations.</p>
     <h2 class="hasAnchor" id="references"><a class="anchor" href="#references"></a>References</h2>
 
     <p>For more information on this index see:</p>
@@ -180,70 +201,68 @@ doi: <a href='https://doi.org/10.1140/epjb/e2015-60298-7'>10.1140/epjb/e2015-602
 <p>and the references therein.</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='fu'>complexity_measures</span>(
-  <span class='kw'>bi</span> <span class='kw'>=</span> <span class='no'>binet_output</span>$<span class='no'>balassa_index</span>, <span class='kw'>x</span> <span class='kw'>=</span> <span class='st'>"country"</span>, <span class='kw'>y</span> <span class='kw'>=</span> <span class='st'>"product"</span>, <span class='kw'>v</span> <span class='kw'>=</span> <span class='st'>"value"</span>
-)</div><div class='output co'>#&gt; $complexity_index_x
+    <pre class="examples"><div class='input'><span class='fu'>complexity_measures</span>(<span class='kw'>balassa_index</span> <span class='kw'>=</span> <span class='no'>binet_output</span>$<span class='no'>balassa_index</span>)</div><div class='output co'>#&gt; $complexity_index_source
 #&gt; <span style='color: #555555;'># A tibble: 158 x 2</span><span>
-#&gt;    country value
-#&gt;    </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span>   </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span>
-#&gt; </span><span style='color: #555555;'> 1</span><span> deu     28.8 
-#&gt; </span><span style='color: #555555;'> 2</span><span> fra     21.4 
-#&gt; </span><span style='color: #555555;'> 3</span><span> usa     14.1 
-#&gt; </span><span style='color: #555555;'> 4</span><span> nld     11.5 
-#&gt; </span><span style='color: #555555;'> 5</span><span> che     10.5 
-#&gt; </span><span style='color: #555555;'> 6</span><span> gbr      9.81
-#&gt; </span><span style='color: #555555;'> 7</span><span> ita      9.61
-#&gt; </span><span style='color: #555555;'> 8</span><span> swe      7.35
-#&gt; </span><span style='color: #555555;'> 9</span><span> aut      7.34
-#&gt; </span><span style='color: #555555;'>10</span><span> jpn      7.27
+#&gt;    source value
+#&gt;    </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span>  </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span>
+#&gt; </span><span style='color: #555555;'> 1</span><span> deu    28.8 
+#&gt; </span><span style='color: #555555;'> 2</span><span> fra    21.4 
+#&gt; </span><span style='color: #555555;'> 3</span><span> usa    14.1 
+#&gt; </span><span style='color: #555555;'> 4</span><span> nld    11.5 
+#&gt; </span><span style='color: #555555;'> 5</span><span> che    10.5 
+#&gt; </span><span style='color: #555555;'> 6</span><span> gbr     9.81
+#&gt; </span><span style='color: #555555;'> 7</span><span> ita     9.61
+#&gt; </span><span style='color: #555555;'> 8</span><span> swe     7.35
+#&gt; </span><span style='color: #555555;'> 9</span><span> aut     7.34
+#&gt; </span><span style='color: #555555;'>10</span><span> jpn     7.27
 #&gt; </span><span style='color: #555555;'># … with 148 more rows</span><span>
 #&gt; 
-#&gt; $complexity_index_y
+#&gt; $complexity_index_target
 #&gt; </span><span style='color: #555555;'># A tibble: 991 x 2</span><span>
-#&gt;    product value
-#&gt;    </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span>   </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span>
-#&gt; </span><span style='color: #555555;'> 1</span><span> 7111     75.1
-#&gt; </span><span style='color: #555555;'> 2</span><span> 2850     55.9
-#&gt; </span><span style='color: #555555;'> 3</span><span> 8804     32.1
-#&gt; </span><span style='color: #555555;'> 4</span><span> 9307     24.7
-#&gt; </span><span style='color: #555555;'> 5</span><span> 9112     20.2
-#&gt; </span><span style='color: #555555;'> 6</span><span> 3505     19.6
-#&gt; </span><span style='color: #555555;'> 7</span><span> 3813     14.3
-#&gt; </span><span style='color: #555555;'> 8</span><span> 7507     12.6
-#&gt; </span><span style='color: #555555;'> 9</span><span> 2927     12.1
-#&gt; </span><span style='color: #555555;'>10</span><span> 2810     11.8
+#&gt;    target value
+#&gt;    </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span>  </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span>
+#&gt; </span><span style='color: #555555;'> 1</span><span> 7111    75.1
+#&gt; </span><span style='color: #555555;'> 2</span><span> 2850    55.9
+#&gt; </span><span style='color: #555555;'> 3</span><span> 8804    32.1
+#&gt; </span><span style='color: #555555;'> 4</span><span> 9307    24.7
+#&gt; </span><span style='color: #555555;'> 5</span><span> 9112    20.2
+#&gt; </span><span style='color: #555555;'> 6</span><span> 3505    19.6
+#&gt; </span><span style='color: #555555;'> 7</span><span> 3813    14.3
+#&gt; </span><span style='color: #555555;'> 8</span><span> 7507    12.6
+#&gt; </span><span style='color: #555555;'> 9</span><span> 2927    12.1
+#&gt; </span><span style='color: #555555;'>10</span><span> 2810    11.8
 #&gt; </span><span style='color: #555555;'># … with 981 more rows</span><span>
 #&gt; 
-#&gt; $diversity
+#&gt; $balassa_sum_source
 #&gt; </span><span style='color: #555555;'># A tibble: 158 x 2</span><span>
-#&gt;    country value
-#&gt;    </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span>   </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span>
-#&gt; </span><span style='color: #555555;'> 1</span><span> afg        28
-#&gt; </span><span style='color: #555555;'> 2</span><span> ago        52
-#&gt; </span><span style='color: #555555;'> 3</span><span> alb        32
-#&gt; </span><span style='color: #555555;'> 4</span><span> and        23
-#&gt; </span><span style='color: #555555;'> 5</span><span> ant        23
-#&gt; </span><span style='color: #555555;'> 6</span><span> are         1
-#&gt; </span><span style='color: #555555;'> 7</span><span> arg        83
-#&gt; </span><span style='color: #555555;'> 8</span><span> aus        81
-#&gt; </span><span style='color: #555555;'> 9</span><span> aut       290
-#&gt; </span><span style='color: #555555;'>10</span><span> bdi        16
+#&gt;    source value
+#&gt;    </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span>  </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span>
+#&gt; </span><span style='color: #555555;'> 1</span><span> afg       28
+#&gt; </span><span style='color: #555555;'> 2</span><span> ago       52
+#&gt; </span><span style='color: #555555;'> 3</span><span> alb       32
+#&gt; </span><span style='color: #555555;'> 4</span><span> and       23
+#&gt; </span><span style='color: #555555;'> 5</span><span> ant       23
+#&gt; </span><span style='color: #555555;'> 6</span><span> are        1
+#&gt; </span><span style='color: #555555;'> 7</span><span> arg       83
+#&gt; </span><span style='color: #555555;'> 8</span><span> aus       81
+#&gt; </span><span style='color: #555555;'> 9</span><span> aut      290
+#&gt; </span><span style='color: #555555;'>10</span><span> bdi       16
 #&gt; </span><span style='color: #555555;'># … with 148 more rows</span><span>
 #&gt; 
-#&gt; $ubiquity
+#&gt; $balassa_sum_target
 #&gt; </span><span style='color: #555555;'># A tibble: 991 x 2</span><span>
-#&gt;    product value
-#&gt;    </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span>   </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span>
-#&gt; </span><span style='color: #555555;'> 1</span><span> 0101       19
-#&gt; </span><span style='color: #555555;'> 2</span><span> 0102       26
-#&gt; </span><span style='color: #555555;'> 3</span><span> 0103       16
-#&gt; </span><span style='color: #555555;'> 4</span><span> 0104       19
-#&gt; </span><span style='color: #555555;'> 5</span><span> 0105       11
-#&gt; </span><span style='color: #555555;'> 6</span><span> 0106       35
-#&gt; </span><span style='color: #555555;'> 7</span><span> 0201       21
-#&gt; </span><span style='color: #555555;'> 8</span><span> 0203       15
-#&gt; </span><span style='color: #555555;'> 9</span><span> 0204        6
-#&gt; </span><span style='color: #555555;'>10</span><span> 0205       12
+#&gt;    target value
+#&gt;    </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span>  </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span>
+#&gt; </span><span style='color: #555555;'> 1</span><span> 0101      19
+#&gt; </span><span style='color: #555555;'> 2</span><span> 0102      26
+#&gt; </span><span style='color: #555555;'> 3</span><span> 0103      16
+#&gt; </span><span style='color: #555555;'> 4</span><span> 0104      19
+#&gt; </span><span style='color: #555555;'> 5</span><span> 0105      11
+#&gt; </span><span style='color: #555555;'> 6</span><span> 0106      35
+#&gt; </span><span style='color: #555555;'> 7</span><span> 0201      21
+#&gt; </span><span style='color: #555555;'> 8</span><span> 0203      15
+#&gt; </span><span style='color: #555555;'> 9</span><span> 0204       6
+#&gt; </span><span style='color: #555555;'>10</span><span> 0205      12
 #&gt; </span><span style='color: #555555;'># … with 981 more rows</span><span>
 #&gt; </div><div class='input'>
 </div></span></pre>
@@ -252,6 +271,8 @@ doi: <a href='https://doi.org/10.1140/epjb/e2015-60298-7'>10.1140/epjb/e2015-602
     <h2>Contents</h2>
     <ul class="nav nav-pills nav-stacked">
       <li><a href="#arguments">Arguments</a></li>
+      <li><a href="#value">Value</a></li>
+      <li><a href="#details">Details</a></li>
       <li><a href="#references">References</a></li>
       <li><a href="#examples">Examples</a></li>
     </ul>

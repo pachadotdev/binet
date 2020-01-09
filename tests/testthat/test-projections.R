@@ -14,11 +14,13 @@ test_that("projection returns a simplified network with adecuate parameters", {
 })
 
 test_that("projection returns the spanning tree with extreme parameters", {
-  net <- projections(
-    proximity_source = binet_output$proximity$proximity_source,
-    proximity_target = binet_output$proximity$proximity_target,
-    tolerance = 1,
-    avg_links = 1
+  net <- expect_warning(
+    projections(
+      proximity_source = binet_output$proximity$proximity_source,
+      proximity_target = binet_output$proximity$proximity_target,
+      tolerance = 1,
+      avg_links = 1
+    )
   )
 
   expect_is(net, "list")
@@ -30,12 +32,14 @@ test_that("projection returns the spanning tree with extreme parameters", {
 
 test_that("projection returns source projection only", {
   # just spanning tree for speed
-  net <- projections(
-    proximity_source = binet_output$proximity$proximity_source,
-    proximity_target = binet_output$proximity$proximity_target,
-    tolerance = 1,
-    avg_links = 1,
-    compute = "source"
+  net <- expect_warning(
+    projections(
+      proximity_source = binet_output$proximity$proximity_source,
+      proximity_target = binet_output$proximity$proximity_target,
+      tolerance = 1,
+      avg_links = 1,
+      compute = "source"
+    )
   )
 
   expect_is(net, "list")
@@ -47,12 +51,14 @@ test_that("projection returns source projection only", {
 
 test_that("projection returns target projection only", {
   # just spanning tree for speed
-  net <- projections(
-    proximity_source = binet_output$proximity$proximity_source,
-    proximity_target = binet_output$proximity$proximity_target,
-    tolerance = 1,
-    avg_links = 1,
-    compute = "target"
+  net <- expect_warning(
+    projections(
+      proximity_source = binet_output$proximity$proximity_source,
+      proximity_target = binet_output$proximity$proximity_target,
+      tolerance = 1,
+      avg_links = 1,
+      compute = "target"
+    )
   )
 
   expect_is(net, "list")

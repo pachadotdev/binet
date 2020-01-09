@@ -36,7 +36,7 @@
 
 
 <meta property="og:title" content="Proximity — proximity" />
-<meta property="og:description" content="Proximity" />
+<meta property="og:description" content="TBDs" />
 <meta name="twitter:card" content="summary" />
 
 
@@ -118,79 +118,64 @@
     </div>
 
     <div class="ref-description">
-    <p>Proximity</p>
+    <p>TBDs</p>
     </div>
 
-    <pre class="usage"><span class='fu'>proximity</span>(<span class='kw'>bi</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>x</span> <span class='kw'>=</span> <span class='st'>"x"</span>, <span class='kw'>y</span> <span class='kw'>=</span> <span class='st'>"y"</span>, <span class='kw'>v</span> <span class='kw'>=</span> <span class='st'>"v"</span>, <span class='kw'>d</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>dx</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>dv</span> <span class='kw'>=</span> <span class='st'>"value"</span>, <span class='kw'>u</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>uy</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>uv</span> <span class='kw'>=</span> <span class='st'>"value"</span>,
-  <span class='kw'>tbl</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>compute</span> <span class='kw'>=</span> <span class='st'>"both"</span>)</pre>
+    <pre class="usage"><span class='fu'>proximity</span>(
+  <span class='no'>balassa_index</span>,
+  <span class='no'>balassa_sum_source</span>,
+  <span class='no'>balassa_sum_target</span>,
+  <span class='kw'>source</span> <span class='kw'>=</span> <span class='st'>"source"</span>,
+  <span class='kw'>target</span> <span class='kw'>=</span> <span class='st'>"target"</span>,
+  <span class='kw'>value</span> <span class='kw'>=</span> <span class='st'>"value"</span>,
+  <span class='kw'>compute</span> <span class='kw'>=</span> <span class='st'>"both"</span>
+)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>bi</th>
-      <td><p>A matrix or tibble/data.frame. You can pass the
-output of <code><a href='balassa_index.html'>balassa_index()</a></code> here or a similar data structure.</p></td>
+      <th>balassa_index</th>
+      <td><p>a data frame (e.g. the output from
+<code><a href='balassa_index.html'>balassa_index()</a></code>).</p></td>
     </tr>
     <tr>
-      <th>x</th>
-      <td><p>string to indicate the column that contains the elements of
-set X (applies only if d is a tibble/data.frame)</p></td>
+      <th>balassa_sum_source</th>
+      <td><p>numeric vector or tibble/data.frame containing the
+Balassa sum for elements of set X (e.g. <code>balassa_sum_source</code> from
+<code><a href='complexity_measures.html'>complexity_measures()</a></code>).</p></td>
     </tr>
     <tr>
-      <th>y</th>
-      <td><p>string to indicate the column that contains the elements of
-set Y (applies only if d is a tibble/data.frame)</p></td>
+      <th>balassa_sum_target</th>
+      <td><p>numeric vector or tibble/data.frame containing the
+Balassa sum for elements of set Y (e.g. <code>balassa_sum_target</code> from
+<code><a href='complexity_measures.html'>complexity_measures()</a></code>).</p></td>
     </tr>
     <tr>
-      <th>v</th>
-      <td><p>string to indicate the column that contains a metric of the
-relation between the elements of the sets X and Y (applies only
-if d is a tibble/data.frame)</p></td>
+      <th>source</th>
+      <td><p>a column with the elements of set X (applies only if data is
+a data frame).</p></td>
     </tr>
     <tr>
-      <th>d</th>
-      <td><p>numeric vector or tibble/data.frame containing diversity
-measures (e.g. diversity from <code><a href='complexity_measures.html'>complexity_measures()</a></code>)</p></td>
+      <th>target</th>
+      <td><p>a column with the elements of set Y (applies only if data is
+a data frame).</p></td>
     </tr>
     <tr>
-      <th>dx</th>
-      <td><p>string to indicate the column that contains
-the elements of set X in d (default set to NULL)</p></td>
-    </tr>
-    <tr>
-      <th>dv</th>
-      <td><p>string to indicate the column that contains
-a diversity metric for the elements of set X in d (default set to "value")</p></td>
-    </tr>
-    <tr>
-      <th>u</th>
-      <td><p>numeric vector or tibble/data.frame containing ubiquity
-measures (e.g. ubiquity from <code><a href='complexity_measures.html'>complexity_measures()</a></code>)</p></td>
-    </tr>
-    <tr>
-      <th>uy</th>
-      <td><p>string to indicate the column that contains
-the elements of set Y in u (default set to NULL)</p></td>
-    </tr>
-    <tr>
-      <th>uv</th>
-      <td><p>string to indicate the column that contains
-a ubiquity metric for the elements of set Y in u (default set to "value")</p></td>
-    </tr>
-    <tr>
-      <th>tbl</th>
-      <td><p>when set to TRUE, the output will be a tibble instead of a
-matrix (default set to TRUE)</p></td>
+      <th>value</th>
+      <td><p>a column with some metric of the relation between the elements
+of X and Y (applies only if data is a data frame).</p></td>
     </tr>
     <tr>
       <th>compute</th>
-      <td><p>set to "both" by default, it can also be "x" or "y" to
-obtain one matrix from the bipartite relation</p></td>
+      <td><p>which proximity to compute. By default is "both" (both
+proximities) but it can also be "source" or "target".</p></td>
     </tr>
     </table>
 
+    <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
+
+    <p>TBD</p>
     <h2 class="hasAnchor" id="references"><a class="anchor" href="#references"></a>References</h2>
 
     <p>For more information see:</p>
@@ -203,53 +188,48 @@ doi: <a href='https://doi.org/10.7551/mitpress/9647.001.0001'>10.7551/mitpress/9
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'><span class='fu'>proximity</span>(
-  <span class='kw'>bi</span> <span class='kw'>=</span> <span class='no'>binet_output</span>$<span class='no'>balassa_index</span>,
-  <span class='kw'>x</span> <span class='kw'>=</span> <span class='st'>"country"</span>,
-  <span class='kw'>y</span> <span class='kw'>=</span> <span class='st'>"product"</span>,
-  <span class='kw'>v</span> <span class='kw'>=</span> <span class='st'>"value"</span>,
-  <span class='kw'>d</span> <span class='kw'>=</span> <span class='no'>binet_output</span>$<span class='no'>complexity_measures</span>$<span class='no'>diversity</span>,
-  <span class='kw'>dx</span> <span class='kw'>=</span> <span class='st'>"country"</span>,
-  <span class='kw'>dv</span> <span class='kw'>=</span> <span class='st'>"value"</span>,
-  <span class='kw'>u</span> <span class='kw'>=</span> <span class='no'>binet_output</span>$<span class='no'>complexity_measures</span>$<span class='no'>ubiquity</span>,
-  <span class='kw'>uy</span> <span class='kw'>=</span> <span class='st'>"product"</span>,
-  <span class='kw'>uv</span> <span class='kw'>=</span> <span class='st'>"value"</span>
-)</div><div class='output co'>#&gt; $proximity_x
+  <span class='kw'>balassa_index</span> <span class='kw'>=</span> <span class='no'>binet_output</span>$<span class='no'>balassa_index</span>,
+  <span class='kw'>balassa_sum_source</span> <span class='kw'>=</span> <span class='no'>binet_output</span>$<span class='no'>complexity_measures</span>$<span class='no'>balassa_sum_source</span>,
+  <span class='kw'>balassa_sum_target</span> <span class='kw'>=</span> <span class='no'>binet_output</span>$<span class='no'>complexity_measures</span>$<span class='no'>balassa_sum_target</span>
+)</div><div class='output co'>#&gt; $proximity_source
 #&gt; <span style='color: #555555;'># A tibble: 10,432 x 3</span><span>
-#&gt;    from  to      value
-#&gt;    </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span> </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span>   </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span>
-#&gt; </span><span style='color: #555555;'> 1</span><span> ago   afg   0.096</span><span style='text-decoration: underline;'>2</span><span> 
-#&gt; </span><span style='color: #555555;'> 2</span><span> alb   afg   0.219  
-#&gt; </span><span style='color: #555555;'> 3</span><span> arg   afg   0.120  
-#&gt; </span><span style='color: #555555;'> 4</span><span> aus   afg   0.111  
-#&gt; </span><span style='color: #555555;'> 5</span><span> aut   afg   0.006</span><span style='text-decoration: underline;'>90</span><span>
-#&gt; </span><span style='color: #555555;'> 6</span><span> bdi   afg   0.071</span><span style='text-decoration: underline;'>4</span><span> 
-#&gt; </span><span style='color: #555555;'> 7</span><span> bel   afg   0.009</span><span style='text-decoration: underline;'>38</span><span>
-#&gt; </span><span style='color: #555555;'> 8</span><span> ben   afg   0.107  
-#&gt; </span><span style='color: #555555;'> 9</span><span> bfa   afg   0.081</span><span style='text-decoration: underline;'>6</span><span> 
-#&gt; </span><span style='color: #555555;'>10</span><span> bgr   afg   0.094</span><span style='text-decoration: underline;'>5</span><span> 
+#&gt;    source target   value
+#&gt;    </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span>  </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span>    </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span>
+#&gt; </span><span style='color: #555555;'> 1</span><span> ago    afg    0.096</span><span style='text-decoration: underline;'>2</span><span> 
+#&gt; </span><span style='color: #555555;'> 2</span><span> alb    afg    0.219  
+#&gt; </span><span style='color: #555555;'> 3</span><span> arg    afg    0.120  
+#&gt; </span><span style='color: #555555;'> 4</span><span> aus    afg    0.111  
+#&gt; </span><span style='color: #555555;'> 5</span><span> aut    afg    0.006</span><span style='text-decoration: underline;'>90</span><span>
+#&gt; </span><span style='color: #555555;'> 6</span><span> bdi    afg    0.071</span><span style='text-decoration: underline;'>4</span><span> 
+#&gt; </span><span style='color: #555555;'> 7</span><span> bel    afg    0.009</span><span style='text-decoration: underline;'>38</span><span>
+#&gt; </span><span style='color: #555555;'> 8</span><span> ben    afg    0.107  
+#&gt; </span><span style='color: #555555;'> 9</span><span> bfa    afg    0.081</span><span style='text-decoration: underline;'>6</span><span> 
+#&gt; </span><span style='color: #555555;'>10</span><span> bgr    afg    0.094</span><span style='text-decoration: underline;'>5</span><span> 
 #&gt; </span><span style='color: #555555;'># … with 10,422 more rows</span><span>
 #&gt; 
-#&gt; $proximity_y
+#&gt; $proximity_target
 #&gt; </span><span style='color: #555555;'># A tibble: 417,822 x 3</span><span>
-#&gt;    from  to    value
-#&gt;    </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span> </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span> </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span>
-#&gt; </span><span style='color: #555555;'> 1</span><span> 0102  0101  0.346
-#&gt; </span><span style='color: #555555;'> 2</span><span> 0103  0101  0.263
-#&gt; </span><span style='color: #555555;'> 3</span><span> 0104  0101  0.421
-#&gt; </span><span style='color: #555555;'> 4</span><span> 0106  0101  0.2  
-#&gt; </span><span style='color: #555555;'> 5</span><span> 0201  0101  0.381
-#&gt; </span><span style='color: #555555;'> 6</span><span> 0203  0101  0.474
-#&gt; </span><span style='color: #555555;'> 7</span><span> 0204  0101  0.158
-#&gt; </span><span style='color: #555555;'> 8</span><span> 0205  0101  0.368
-#&gt; </span><span style='color: #555555;'> 9</span><span> 0206  0101  0.316
-#&gt; </span><span style='color: #555555;'>10</span><span> 0207  0101  0.368
+#&gt;    source target value
+#&gt;    </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span>  </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span>  </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span>
+#&gt; </span><span style='color: #555555;'> 1</span><span> 0102   0101   0.346
+#&gt; </span><span style='color: #555555;'> 2</span><span> 0103   0101   0.263
+#&gt; </span><span style='color: #555555;'> 3</span><span> 0104   0101   0.421
+#&gt; </span><span style='color: #555555;'> 4</span><span> 0106   0101   0.2  
+#&gt; </span><span style='color: #555555;'> 5</span><span> 0201   0101   0.381
+#&gt; </span><span style='color: #555555;'> 6</span><span> 0203   0101   0.474
+#&gt; </span><span style='color: #555555;'> 7</span><span> 0204   0101   0.158
+#&gt; </span><span style='color: #555555;'> 8</span><span> 0205   0101   0.368
+#&gt; </span><span style='color: #555555;'> 9</span><span> 0206   0101   0.316
+#&gt; </span><span style='color: #555555;'>10</span><span> 0207   0101   0.368
 #&gt; </span><span style='color: #555555;'># … with 417,812 more rows</span><span>
-#&gt; </div></span></pre>
+#&gt; </div><div class='input'>
+</div></span></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
     <ul class="nav nav-pills nav-stacked">
       <li><a href="#arguments">Arguments</a></li>
+      <li><a href="#details">Details</a></li>
       <li><a href="#references">References</a></li>
       <li><a href="#examples">Examples</a></li>
     </ul>
