@@ -31,7 +31,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">binet</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.2</span>
       </span>
     </div>
 
@@ -322,40 +322,40 @@
 <span id="cb23-6"><a href="#cb23-6"></a></span>
 <span id="cb23-7"><a href="#cb23-7"></a>net<span class="op">$</span>network_source</span></code></pre></div>
 <pre><code>## # A tibble: 272 x 3
-##    from  to    value
-##    &lt;chr&gt; &lt;chr&gt; &lt;dbl&gt;
-##  1 irn   syr   0.344
-##  2 irn   alb   0.375
-##  3 irn   tur   0.348
-##  4 irn   afg   0.5  
-##  5 npl   afg   0.214
-##  6 syr   afg   0.357
-##  7 ago   ben   0.339
-##  8 ago   khm   0.308
-##  9 ago   moz   0.304
-## 10 ago   per   0.358
+##    source target value
+##    &lt;chr&gt;  &lt;chr&gt;  &lt;dbl&gt;
+##  1 irn    syr    0.344
+##  2 irn    alb    0.375
+##  3 irn    tur    0.348
+##  4 irn    afg    0.5  
+##  5 npl    afg    0.214
+##  6 syr    afg    0.357
+##  7 ago    ben    0.339
+##  8 ago    khm    0.308
+##  9 ago    moz    0.304
+## 10 ago    per    0.358
 ## # … with 262 more rows</code></pre>
 <div class="sourceCode" id="cb25"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1"></a>net<span class="op">$</span>network_target</span></code></pre></div>
 <pre><code>## # A tibble: 1,800 x 3
-##    from  to    value
-##    &lt;chr&gt; &lt;chr&gt; &lt;dbl&gt;
-##  1 9614  4202  0.529
-##  2 9614  0101  0.579
-##  3 0102  0201  0.5  
-##  4 0102  0104  0.423
-##  5 0103  0505  0.647
-##  6 1102  1005  0.5  
-##  7 1102  0105  0.417
-##  8 4803  4707  0.615
-##  9 4803  0105  0.417
-## 10 0106  1302  0.514
+##    source target value
+##    &lt;chr&gt;  &lt;chr&gt;  &lt;dbl&gt;
+##  1 9614   4202   0.529
+##  2 9614   0101   0.579
+##  3 0102   0201   0.5  
+##  4 0102   0104   0.423
+##  5 0103   0505   0.647
+##  6 1102   1005   0.5  
+##  7 1102   0105   0.417
+##  8 4803   4707   0.615
+##  9 4803   0105   0.417
+## 10 0106   1302   0.514
 ## # … with 1,790 more rows</code></pre>
 <p>Just two basic examples with <code>ggraph</code>.</p>
 <div class="sourceCode" id="cb27"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1"></a><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span>(igraph)</span>
 <span id="cb27-2"><a href="#cb27-2"></a><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span>(ggraph)</span>
 <span id="cb27-3"><a href="#cb27-3"></a><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span>(magrittr)</span>
 <span id="cb27-4"><a href="#cb27-4"></a></span>
-<span id="cb27-5"><a href="#cb27-5"></a><span class="kw"><a href="https://rdrr.io/r/base/Random.html">set.seed</a></span>(<span class="dv">200100</span>)</span>
+<span id="cb27-5"><a href="#cb27-5"></a><span class="kw"><a href="https://rdrr.io/r/base/Random.html">set.seed</a></span>(<span class="dv">1813</span>)</span>
 <span id="cb27-6"><a href="#cb27-6"></a></span>
 <span id="cb27-7"><a href="#cb27-7"></a>net<span class="op">$</span>network_source <span class="op">%&gt;%</span></span>
 <span id="cb27-8"><a href="#cb27-8"></a><span class="st">  </span><span class="kw">graph_from_data_frame</span>(<span class="dt">directed =</span> F) <span class="op">%&gt;%</span></span>
@@ -369,7 +369,7 @@
 <p><img src="basic-usage_files/figure-html/unnamed-chunk-9-1.png" width="1920"></p>
 <div class="sourceCode" id="cb28"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1"></a>net<span class="op">$</span>network_target <span class="op">%&gt;%</span></span>
 <span id="cb28-2"><a href="#cb28-2"></a><span class="st">  </span><span class="kw">graph_from_data_frame</span>(<span class="dt">directed =</span> F) <span class="op">%&gt;%</span></span>
-<span id="cb28-3"><a href="#cb28-3"></a><span class="st">  </span><span class="kw">ggraph</span>(<span class="dt">layout =</span> <span class="st">"kk"</span>) <span class="op">+</span></span>
+<span id="cb28-3"><a href="#cb28-3"></a><span class="st">  </span><span class="kw">ggraph</span>(<span class="dt">layout =</span> <span class="st">"fr"</span>) <span class="op">+</span></span>
 <span id="cb28-4"><a href="#cb28-4"></a><span class="st">  </span><span class="kw">geom_edge_link</span>(<span class="kw">aes</span>(<span class="dt">edge_alpha =</span> value, <span class="dt">edge_width =</span> value),</span>
 <span id="cb28-5"><a href="#cb28-5"></a>                 <span class="dt">edge_colour =</span> <span class="st">"#a8a8a8"</span>) <span class="op">+</span></span>
 <span id="cb28-6"><a href="#cb28-6"></a><span class="st">  </span><span class="kw">geom_node_point</span>(<span class="dt">color =</span> <span class="st">"darkslategray4"</span>, <span class="dt">size =</span> <span class="dv">4</span>) <span class="op">+</span></span>

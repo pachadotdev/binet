@@ -22,7 +22,7 @@
 #' projections) but it can also be "source" or "target".
 #'
 #' @importFrom magrittr %>%
-#' @importFrom dplyr as_tibble filter mutate mutate_if bind_rows
+#' @importFrom dplyr as_tibble filter mutate mutate_if bind_rows rename
 #' @importFrom igraph graph_from_data_frame mst as_data_frame simplify degree
 #' @importFrom rlang sym
 #'
@@ -127,7 +127,8 @@ projections <- function(proximity_source, proximity_target,
     message(rep("-", 50))
     xg <- trim_network(proximity_source, avg_links)
     xg <- igraph::as_data_frame(xg) %>%
-      dplyr::as_tibble()
+      dplyr::as_tibble() %>%
+      dplyr::rename(source = !!sym("from"), target = !!sym("to"))
   } else {
     xg <- NULL
   }
@@ -137,7 +138,8 @@ projections <- function(proximity_source, proximity_target,
     message(rep("-", 50))
     yg <- trim_network(proximity_target, avg_links)
     yg <- igraph::as_data_frame(yg) %>%
-      dplyr::as_tibble()
+      dplyr::as_tibble() %>%
+      dplyr::rename(source = !!sym("from"), target = !!sym("to"))
   } else {
     yg <- NULL
   }

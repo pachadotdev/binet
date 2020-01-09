@@ -1,7 +1,7 @@
 Package: binet
 Type: Package
 Title: Functions to build bipartite networks under the Tidyverse philosophy
-Version: 0.1
+Version: 0.2
 Authors@R: c(
     person(given = "Mauricio",
       family = "Vargas",
@@ -27,7 +27,6 @@ Imports:
     magrittr,
     tibble,
     dplyr,
-    tidyr, 
     Matrix, 
     igraph,
     rlang

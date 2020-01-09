@@ -76,7 +76,7 @@ library(igraph)
 library(ggraph)
 library(magrittr)
 
-set.seed(200100)
+set.seed(1813)
 
 net$network_source %>%
   graph_from_data_frame(directed = F) %>%
@@ -91,7 +91,7 @@ net$network_source %>%
 ## ---- fig.width=20, fig.height=12---------------------------------------------
 net$network_target %>%
   graph_from_data_frame(directed = F) %>%
-  ggraph(layout = "kk") +
+  ggraph(layout = "fr") +
   geom_edge_link(aes(edge_alpha = value, edge_width = value),
                  edge_colour = "#a8a8a8") +
   geom_node_point(color = "darkslategray4", size = 4) +
