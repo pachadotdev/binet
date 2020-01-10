@@ -4,9 +4,15 @@
 \alias{complexity_measures}
 \title{Complexity Measures}
 \usage{
-complexity_measures(balassa_index, source = "source",
-  target = "target", value = "value", method = "fitness",
-  iterations = 20, extremality = 1)
+complexity_measures(
+  balassa_index,
+  source = "source",
+  target = "target",
+  value = "value",
+  method = "fitness",
+  iterations = 20,
+  extremality = 1
+)
 }
 \arguments{
 \item{balassa_index}{(Type: data.frame) the output from

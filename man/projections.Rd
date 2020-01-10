@@ -4,9 +4,16 @@
 \alias{projections}
 \title{Projections of a bipartite network}
 \usage{
-projections(proximity_source, proximity_target, source = "source",
-  target = "target", value = "value", avg_links = 4,
-  tolerance = 0.05, compute = "both")
+projections(
+  proximity_source,
+  proximity_target,
+  source = "source",
+  target = "target",
+  value = "value",
+  avg_links = 4,
+  tolerance = 0.05,
+  compute = "both"
+)
 }
 \arguments{
 \item{proximity_source}{a data frame containing proximity
