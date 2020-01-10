@@ -31,10 +31,10 @@
 #' By default this is set to \code{1}.
 #'
 #' @importFrom magrittr %>%
-#' @importFrom dplyr mutate_if arrange
+#' @importFrom dplyr select mutate arrange
 #' @importFrom tibble tibble enframe
 #' @importFrom Matrix Matrix sparseMatrix rowSums colSums t
-#' @importFrom rlang sym
+#' @importFrom rlang sym syms
 #'
 #' @examples
 #' complexity_measures(balassa_index = binet_output$balassa_index)
@@ -71,7 +71,12 @@ complexity_measures <- function(balassa_index, source = "source", target = "targ
 
   # convert data.frame input to matrix ----
   balassa_index <- balassa_index %>%
-    dplyr::mutate_if(is.character, as.factor)
+    dplyr::select(!!!syms(c(source, target, value))) %>%
+    dplyr::mutate(
+      source = as.factor(!!sym(source)),
+      target = as.factor(!!sym(target)),
+      value = as.numeric(!!sym(value))
+    )
 
   m <- with(
     balassa_index,
@@ -82,6 +87,8 @@ complexity_measures <- function(balassa_index, source = "source", target = "targ
       dimnames = list(levels(source), levels(target))
     )
   )
+
+  rm(balassa_index)
 
   # compute complexity measures ----
   # balassa_sum_x (kx0) and balassa_sum_y (ky0)

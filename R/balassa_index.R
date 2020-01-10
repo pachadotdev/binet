@@ -71,22 +71,30 @@ balassa_index <- function(data, source = "source", target = "target", value = "v
     stop("'cutoff' must be numeric")
   }
 
-  # aggregate input by X and Y ----
+  # Aggregate input by X and Y ----
   data <- data %>%
-    # Sum by x and y
-    dplyr::group_by(!!!syms(c(source, target))) %>%
-    dplyr::summarise(vxy = sum(!!sym(value), na.rm = TRUE)) %>%
+    # Select and transform inputs
+    dplyr::select(!!!syms(c(source, target, value))) %>%
+    dplyr::mutate(
+      source = as.character(!!sym(source)),
+      target = as.character(!!sym(target)),
+      value = as.numeric(!!sym(value))
+    ) %>%
+
+    # Sum by X and Y
+    dplyr::group_by(!!!syms(c("source", "target"))) %>%
+    dplyr::summarise(vxy = sum(!!sym("value"), na.rm = TRUE)) %>%
     dplyr::ungroup() %>%
     dplyr::filter(!!sym("vxy") > 0)
 
-  # compute RCA in tibble form ----
+  # Compute Balassa Index ----
   data <- data %>%
     # Sum by X
-    dplyr::group_by(!!sym(source)) %>%
+    dplyr::group_by(!!sym("source")) %>%
     dplyr::mutate(sum_x_vxy = sum(!!sym("vxy"), na.rm = TRUE)) %>%
 
     # Sum by Y
-    dplyr::group_by(!!sym(target)) %>%
+    dplyr::group_by(!!sym("target")) %>%
     dplyr::mutate(sum_y_vxy = sum(!!sym("vxy"), na.rm = TRUE)) %>%
 
     # Compute BI
@@ -101,8 +109,6 @@ balassa_index <- function(data, source = "source", target = "target", value = "v
     data <- data %>%
       dplyr::mutate(value = dplyr::if_else(!!sym("value") > cutoff, 1, 0))
   }
-
-  names(data) <- c("source", "target", "value")
 
   return(data)
 }

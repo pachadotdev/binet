@@ -22,9 +22,9 @@
 #' projections) but it can also be "source" or "target".
 #'
 #' @importFrom magrittr %>%
-#' @importFrom dplyr as_tibble filter mutate mutate_if bind_rows rename
+#' @importFrom dplyr as_tibble filter mutate bind_rows rename
 #' @importFrom igraph graph_from_data_frame mst as_data_frame simplify degree
-#' @importFrom rlang sym
+#' @importFrom rlang sym syms
 #'
 #' @examples
 #' projections(
@@ -69,8 +69,12 @@ projections <- function(proximity_source, proximity_target,
   trim_network <- function(proximity_d, avg_d) {
     # compute network ----
     proximity_d <- proximity_d %>%
-      dplyr::mutate(value = -1 * !!sym(value)) %>%
-      dplyr::mutate_if(is.factor, as.character)
+      dplyr::select(!!!syms(c(source, target, value))) %>%
+      dplyr::mutate(
+        source = as.character(!!sym(source)),
+        target = as.character(!!sym(target)),
+        value = -1 * as.numeric(!!sym(value))
+      )
 
     proximity_g <- igraph::graph_from_data_frame(proximity_d, directed = FALSE)
 

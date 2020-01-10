@@ -25,7 +25,7 @@
 #' @importFrom dplyr select filter mutate mutate_if
 #' @importFrom tibble as_tibble deframe
 #' @importFrom Matrix Matrix t rowSums colSums
-#' @importFrom rlang sym
+#' @importFrom rlang sym syms
 #'
 #' @examples
 #' proximity(
@@ -71,7 +71,12 @@ proximity <- function(balassa_index, balassa_sum_source, balassa_sum_target,
 
   # transformations for data frame inputs ----
   balassa_index <- balassa_index %>%
-    dplyr::mutate_if(is.character, as.factor)
+    dplyr::select(!!!syms(c(source, target, value))) %>%
+    dplyr::mutate(
+      source = as.factor(!!sym(source)),
+      target = as.factor(!!sym(target)),
+      value = as.numeric(!!sym(value))
+    )
 
   balassa_index <- with(
     balassa_index,
