@@ -6,8 +6,8 @@ test_that("proximity results are aligned with the expected output", {
   )
 
   expect_is(pr, "list")
-  expect_equal(nrow(pr$proximity_source), 10432)
-  expect_equal(nrow(pr$proximity_target), 417822)
+  expect_equal(nrow(pr$proximity_source), 21)
+  expect_equal(nrow(pr$proximity_target), 40)
   expect_gte(min(pr$proximity_source$value), 0)
   expect_lte(max(pr$proximity_source$value), 1)
   expect_gte(min(pr$proximity_target$value), 0)
@@ -23,7 +23,7 @@ test_that("proximity returns source proximity only", {
   )
 
   expect_is(pr, "list")
-  expect_equal(nrow(pr$proximity_source), 10432)
+  expect_equal(nrow(pr$proximity_source), 21)
   expect_equal(nrow(pr$proximity_target), NULL)
   expect_gte(min(pr$proximity_source$value), 0)
   expect_lte(max(pr$proximity_source$value), 1)
@@ -39,7 +39,7 @@ test_that("proximity returns target proximity only", {
 
   expect_is(pr, "list")
   expect_equal(nrow(pr$proximity_source), NULL)
-  expect_equal(nrow(pr$proximity_target), 417822)
+  expect_equal(nrow(pr$proximity_target), 40)
   expect_gte(min(pr$proximity_target$value), 0)
   expect_lte(max(pr$proximity_target$value), 1)
 })

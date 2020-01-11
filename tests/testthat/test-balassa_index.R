@@ -1,10 +1,10 @@
 test_that("balassa_index works with a data frame", {
   bi <- balassa_index(
-    data = trade, source = "country", target = "product", value = "export_value"
+    data = galactic_federation, source = "planet", target = "product", value = "export_value"
   )
 
   expect_is(bi, "data.frame")
-  expect_equal(nrow(bi), 44435)
+  expect_equal(nrow(bi), 54)
   expect_equal(min(bi$value), 0)
   expect_equal(max(bi$value), 1)
 })
@@ -12,7 +12,7 @@ test_that("balassa_index works with a data frame", {
 test_that("balassa_index returns error with vector data", {
   expect_error(
     balassa_index(
-      data = as.numeric(trade$export_value),
+      data = as.numeric(galactic_federation$export_value),
       source = "country",
       target = "product",
       value = "export_value"
@@ -23,7 +23,7 @@ test_that("balassa_index returns error with vector data", {
 test_that("balassa_index returns error with numeric source/target", {
   expect_error(
     balassa_index(
-      data = trade,
+      data = galactic_federation,
       source = 200,
       target = 100,
       value = "export_value"
@@ -34,7 +34,7 @@ test_that("balassa_index returns error with numeric source/target", {
 test_that("balassa_index returns error with character discrete", {
   expect_error(
     balassa_index(
-      data = trade,
+      data = galactic_federation,
       source = "country",
       target = "product",
       value = "export_value",
@@ -46,7 +46,7 @@ test_that("balassa_index returns error with character discrete", {
 test_that("balassa_index returns error with character cutoff", {
   expect_error(
     balassa_index(
-      data = trade,
+      data = galactic_federation,
       source = "country",
       target = "product",
       value = "export_value",

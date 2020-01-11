@@ -11,10 +11,10 @@ test_that("fitness method works in complexity_measures", {
   expect_is(cm$complexity_index_target, "data.frame")
   expect_is(cm$balassa_sum_source, "data.frame")
   expect_is(cm$balassa_sum_target, "data.frame")
-  expect_equal(nrow(cm$complexity_index_source), 158)
-  expect_equal(nrow(cm$complexity_index_target), 991)
-  expect_equal(nrow(cm$balassa_sum_source), 158)
-  expect_equal(nrow(cm$balassa_sum_target), 991)
+  expect_equal(nrow(cm$complexity_index_source), 9)
+  expect_equal(nrow(cm$complexity_index_target), 12)
+  expect_equal(nrow(cm$balassa_sum_source), 9)
+  expect_equal(nrow(cm$balassa_sum_target), 12)
 })
 
 test_that("reflections method works in complexity_measures", {
@@ -30,10 +30,10 @@ test_that("reflections method works in complexity_measures", {
   expect_is(cm$complexity_index_target, "data.frame")
   expect_is(cm$balassa_sum_source, "data.frame")
   expect_is(cm$balassa_sum_target, "data.frame")
-  expect_equal(nrow(cm$complexity_index_source), 158)
-  expect_equal(nrow(cm$complexity_index_target), 991)
-  expect_equal(nrow(cm$balassa_sum_source), 158)
-  expect_equal(nrow(cm$balassa_sum_target), 991)
+  expect_equal(nrow(cm$complexity_index_source), 9)
+  expect_equal(nrow(cm$complexity_index_target), 12)
+  expect_equal(nrow(cm$balassa_sum_source), 9)
+  expect_equal(nrow(cm$balassa_sum_target), 12)
 })
 
 test_that("eigenvalues method works in complexity_measures", {
@@ -49,10 +49,10 @@ test_that("eigenvalues method works in complexity_measures", {
   expect_is(cm$complexity_index_target, "data.frame")
   expect_is(cm$balassa_sum_source, "data.frame")
   expect_is(cm$balassa_sum_target, "data.frame")
-  expect_equal(nrow(cm$complexity_index_source), 158)
-  expect_equal(nrow(cm$complexity_index_target), 991)
-  expect_equal(nrow(cm$balassa_sum_source), 158)
-  expect_equal(nrow(cm$balassa_sum_target), 991)
+  expect_equal(nrow(cm$complexity_index_source), 9)
+  expect_equal(nrow(cm$complexity_index_target), 12)
+  expect_equal(nrow(cm$balassa_sum_source), 9)
+  expect_equal(nrow(cm$balassa_sum_target), 12)
 })
 
 test_that("complexity_measures fails with NULL balassa_index", {

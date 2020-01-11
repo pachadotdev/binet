@@ -1,5 +1,5 @@
 ba_ind <- balassa_index(
-  data = trade, source = "country", target = "product", value = "export_value"
+  data = galactic_federation, source = "planet", target = "product", value = "export_value"
 )
 
 com_fit <- complexity_measures(ba_ind)
@@ -23,4 +23,4 @@ binet_output <- list(
   proximity = prox
 )
 
-save(binet_output, file = "data/binet_output.rda", compress = "xz")
+save(binet_output, file = "data/binet_output.rda")

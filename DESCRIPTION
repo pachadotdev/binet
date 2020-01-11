@@ -14,9 +14,7 @@ Authors@R: c(
   )
 Description: A consistent tool to explore bipartite relations. These methods 
  are useful for different kind of relations such as 
- The Human Disease Network <doi:10.1073/pnas.0701361104>,
- The Product Space <doi:10.7551/mitpress/9647.001.0001> and
- The Global Language Network <doi:10.1073/pnas.1410931111>.
+ The Product Space <doi:10.7551/mitpress/9647.001.0001>.
  The functions within this package correspond to code implementations of the 
  equations described in Mariani, et al. (2015) <doi:10.1140/epjb/e2015-60298-7>
  and Hausmann, et al. (2014) <doi:10.7551/mitpress/9647.001.0001>.

@@ -14,19 +14,20 @@ vignette: >
 knitr::opts_chunk$set(eval = TRUE, message = FALSE, warning = FALSE)
 ```
 
-# International Trade
+# Galactic Federation
 
-This example is inspired after the visualizations from @atlas2014.
+This example is inspired after the visualizations from @atlas2014 but heavily
+inspired after Rick and Morty to keep it simple and lightweight.
 
 ## Package data
 
-I'll use this demo dataset to illustrate the essential usage of the functions
+I'll use the Galactic Federation dataset to illustrate the essential usage of the functions
 within this package.
 
 ```{r}
 library(binet)
 
-trade
+galactic_federation
 ```
 
 ## Balassa Index
@@ -35,8 +36,8 @@ You can obtain Balassa Index with `balassa_index()`.
 
 ```{r}
 bi <- balassa_index(
-  data = trade,
-  source = "country",
+  data = galactic_federation,
+  source = "planet",
   target = "product",
   value = "export_value"
 )
@@ -48,8 +49,8 @@ Another possibility is to obtain Balassa Index without discretization.
 
 ```{r}
 bi_dec <- balassa_index(
-  data =trade,
-  source = "country",
+  data =galactic_federation,
+  source = "planet",
   target = "product",
   value = "export_value",
   discrete = F
@@ -62,12 +63,19 @@ bi_dec
 
 You can compute complexity indexes (e.g. such as the Economic Complexity Index and Product Complexity Index) by using `complexity_measures()`. The calculations methods are *fitness* (default), *reflections*, *eigenvalues*. See [@measuringcomplexity2015] for the methodological details.
 
+The eigenvalues also calls the reflections methods in order to correct the index sign
+in some special cases when the correlation between the output from both methods is negative.
+
+##  Complexity-Fitness
+
 ```{r}
 com_fit <- complexity_measures(balassa_index = bi)
 
 com_fit$complexity_index_source
 com_fit$complexity_index_target
 ```
+
+## Reflections
 
 ```{r}
 com_ref <- complexity_measures(
@@ -78,6 +86,8 @@ com_ref <- complexity_measures(
 com_ref$complexity_index_source
 com_ref$complexity_index_target
 ```
+
+## Eigenvalues
 
 ```{r}
 com_eig <- complexity_measures(
@@ -123,7 +133,7 @@ net$network_target
 ```
 
 Just two basic examples with `ggraph`.
-```{r, fig.width=20, fig.height=12}
+```{r, fig.width=10, fig.height=7}
 library(igraph)
 library(ggraph)
 library(magrittr)
@@ -132,167 +142,26 @@ set.seed(1813)
 
 net$network_source %>%
   graph_from_data_frame(directed = F) %>%
-  ggraph() +
+  ggraph(layout = "kk") +
   geom_edge_link(aes(edge_alpha = value, edge_width = value),
                  edge_colour = "#a8a8a8") +
   geom_node_point(color = "darkslategray4", size = 8) +
   geom_node_text(aes(label = name), vjust = 2.2) +
-  ggtitle("Country Projection") +
+  ggtitle("Proximity Based Network Projection for Planets") +
   theme_void()
 ```
 
 The network associated to `
 
-```{r, fig.width=20, fig.height=12}
+```{r, fig.width=10, fig.height=7}
 net$network_target %>%
   graph_from_data_frame(directed = F) %>%
-  ggraph() +
+  ggraph(layout = "kk") +
   geom_edge_link(aes(edge_alpha = value, edge_width = value),
                  edge_colour = "#a8a8a8") +
   geom_node_point(color = "darkslategray4", size = 4) +
   geom_node_text(aes(label = name), vjust = 2.2) +
-  ggtitle("Product Projection") +
-  theme_void()
-```
-
-# Book translations
-
-This example is inspired after the visualizations from @global2014.
-
-## Package data
-
-I'll use this demo dataset to illustrate the essential usage of the functions
-within this package.
-
-```{r}
-library(binet)
-
-translations
-```
-
-## Balassa Index
-
-You can obtain Balassa Index with `balassa_index()`.
-
-```{r}
-bi <- balassa_index(
-  data = translations,
-  source = "original_language",
-  target = "target_language",
-  value = "num_translations"
-)
-
-bi
-```
-
-Another possibility is to obtain Balassa Index without discretization.
-
-```{r}
-bi_dec <- balassa_index(
-  data = translations,
-  source = "original_language",
-  target = "target_language",
-  value = "num_translations",
-  discrete = F
-)
-
-bi_dec
-```
-
-## Complexity Measures
-
-You can compute complexity indexes (e.g. such as the Economic Complexity Index and Product Complexity Index) by using `complexity_measures()`. The calculations methods are *fitness* (default), *reflections*, *eigenvalues*. See [@measuringcomplexity2015] for the methodological details.
-
-```{r}
-com_fit <- complexity_measures(balassa_index = bi)
-
-com_fit$complexity_index_source
-com_fit$complexity_index_target
-```
-
-```{r}
-com_ref <- complexity_measures(
-  balassa_index = bi,
-  method = "reflections"
-)
-
-com_ref$complexity_index_source
-com_ref$complexity_index_target
-```
-
-```{r}
-com_eig <- complexity_measures(
-  balassa_index = bi,
-  method = "eigenvalues"
-)
-
-com_eig$complexity_index_source
-com_eig$complexity_index_target
-```
-
-## Proximity
-
-Proximity matrices are used to create projections e.g. (country-country and product-product
-networks) for bipartite networks. Using `proximity()` is straightforward.
-
-```{r}
-pro <- proximity(
-  balassa_index = bi,
-  balassa_sum_source = com_fit$balassa_sum_source,
-  balassa_sum_target = com_fit$balassa_sum_target
-)
-
-pro$proximity_source
-pro$proximity_target
-```
-
-## Networks
-
-The `projections()` function is designed to use `igraph` for the internal
-computations and also to pass proximity-based networks to `igraph`, `ggraph`
-or export to Cytoscape by saving the output as csv/tsv.
-
-```{r}
-net <- projections(
-  proximity_source = pro$proximity_source,
-  proximity_target = pro$proximity_target,
-  tolerance = 0.05
-)
-
-net$network_source
-net$network_target
-```
-
-Just two basic examples with `ggraph`.
-```{r, fig.width=20, fig.height=12}
-library(igraph)
-library(ggraph)
-library(magrittr)
-
-set.seed(1813)
-
-net$network_source %>%
-  graph_from_data_frame(directed = F) %>%
-  ggraph() +
-  geom_edge_link(aes(edge_alpha = value, edge_width = value),
-                 edge_colour = "#a8a8a8") +
-  geom_node_point(color = "darkslategray4", size = 8) +
-  geom_node_text(aes(label = name), vjust = 2.2) +
-  ggtitle("Original Language Projection") +
-  theme_void()
-```
-
-The network associated to `
-
-```{r, fig.width=20, fig.height=12}
-net$network_target %>%
-  graph_from_data_frame(directed = F) %>%
-  ggraph() +
-  geom_edge_link(aes(edge_alpha = value, edge_width = value),
-                 edge_colour = "#a8a8a8") +
-  geom_node_point(color = "darkslategray4", size = 4) +
-  geom_node_text(aes(label = name), vjust = 2.2) +
-  ggtitle("Translated Language Projection") +
+  ggtitle("Proximity Based Network Projection for Products") +
   theme_void()
 ```
 
