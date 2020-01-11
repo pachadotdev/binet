@@ -133,19 +133,25 @@ net$network_target
 ```
 
 Just two basic examples with `ggraph`.
-```{r, fig.width=10, fig.height=7}
+```{r, fig.width=7, fig.height=7}
+set.seed(200100)
+
 library(igraph)
 library(ggraph)
-library(magrittr)
+library(tibble)
+library(dplyr)
 
-set.seed(1813)
+aggregated_planets <- galactic_federation %>% 
+  group_by(planet) %>% 
+  summarise(export_value = sum(export_value))
 
-net$network_source %>%
-  graph_from_data_frame(directed = F) %>%
-  ggraph(layout = "kk") +
+net$network_source %>% 
+  graph_from_data_frame(vertices = aggregated_planets, directed = F) %>% 
+  ggraph(layout = "fr") +
   geom_edge_link(aes(edge_alpha = value, edge_width = value),
                  edge_colour = "#a8a8a8") +
-  geom_node_point(color = "darkslategray4", size = 8) +
+  geom_node_point(aes(size = export_value), color = "darkslategray4") +
+  scale_size(range = c(2,10)) +
   geom_node_text(aes(label = name), vjust = 2.2) +
   ggtitle("Proximity Based Network Projection for Planets") +
   theme_void()
@@ -153,13 +159,21 @@ net$network_source %>%
 
 The network associated to `
 
-```{r, fig.width=10, fig.height=7}
+```{r, fig.width=7, fig.height=7}
+set.seed(200100)
+
+aggregated_products <- galactic_federation %>% 
+  group_by(product) %>% 
+  summarise(export_value = sum(export_value))
+
 net$network_target %>%
-  graph_from_data_frame(directed = F) %>%
-  ggraph(layout = "kk") +
+  graph_from_data_frame(vertices = aggregated_products, directed = F) %>%
+  ggraph(layout = "fr") +
   geom_edge_link(aes(edge_alpha = value, edge_width = value),
                  edge_colour = "#a8a8a8") +
   geom_node_point(color = "darkslategray4", size = 4) +
+  geom_node_point(aes(size = export_value), color = "darkslategray4") +
+  scale_size(range = c(2,10)) +
   geom_node_text(aes(label = name), vjust = 2.2) +
   ggtitle("Proximity Based Network Projection for Products") +
   theme_void()

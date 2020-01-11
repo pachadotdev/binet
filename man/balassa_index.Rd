@@ -4,14 +4,8 @@
 \alias{balassa_index}
 \title{Balassa Index}
 \usage{
-balassa_index(
-  data,
-  source = "source",
-  target = "target",
-  value = "value",
-  discrete = TRUE,
-  cutoff = 1
-)
+balassa_index(data, source = "source", target = "target",
+  value = "value", discrete = TRUE, cutoff = 1)
 }
 \arguments{
 \item{data}{(Type: data.frame) a demo datasets such as \code{trade}
@@ -52,8 +46,8 @@ specialized in that product.
 }
 \examples{
 balassa_index(
-    data = trade,
-    source = "country",
+    data = galactic_federation,
+    source = "planet",
     target = "product",
     value = "export_value"
 )
