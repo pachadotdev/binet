@@ -35,8 +35,8 @@
 #'
 #' @examples
 #' balassa_index(
-#'     data = trade,
-#'     source = "country",
+#'     data = galactic_federation,
+#'     source = "planet",
 #'     target = "product",
 #'     value = "export_value"
 #' )
