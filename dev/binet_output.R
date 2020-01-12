@@ -10,12 +10,12 @@ prox <- proximity(
   balassa_sum_target = com_fit$balassa_sum_target
 )
 
-proj <- projections(
-  proximity_source = prox$proximity_source,
-  proximity_target = prox$proximity_target,
-  tolerance = 0.01,
-  avg_links = 4
-)
+# proj <- projections(
+#   proximity_source = prox$proximity_source,
+#   proximity_target = prox$proximity_target,
+#   tolerance = 0.01,
+#   avg_links = 4
+# )
 
 binet_output <- list(
   balassa_index = ba_ind,

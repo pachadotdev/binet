@@ -3,10 +3,11 @@ test_that("balassa_index works with a data frame", {
     data = galactic_federation, source = "planet", target = "product", value = "export_value"
   )
 
-  expect_is(bi, "data.frame")
-  expect_equal(nrow(bi), 54)
-  expect_equal(min(bi$value), 0)
-  expect_equal(max(bi$value), 1)
+  expect_is(bi, "dgCMatrix")
+  expect_equal(nrow(bi), 9)
+  expect_equal(ncol(bi), 12)
+  expect_equal(min(bi), 0)
+  expect_equal(max(bi), 1)
 })
 
 test_that("balassa_index returns error with vector data", {

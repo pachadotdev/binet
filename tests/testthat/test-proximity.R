@@ -6,12 +6,12 @@ test_that("proximity results are aligned with the expected output", {
   )
 
   expect_is(pr, "list")
-  expect_equal(nrow(pr$proximity_source), 21)
-  expect_equal(nrow(pr$proximity_target), 40)
-  expect_gte(min(pr$proximity_source$value), 0)
-  expect_lte(max(pr$proximity_source$value), 1)
-  expect_gte(min(pr$proximity_target$value), 0)
-  expect_lte(max(pr$proximity_target$value), 1)
+  expect_equal(nrow(pr$proximity_source), 9)
+  expect_equal(nrow(pr$proximity_target), 12)
+  expect_gte(min(pr$proximity_source), 0)
+  expect_lte(max(pr$proximity_source), 1)
+  expect_gte(min(pr$proximity_target), 0)
+  expect_lte(max(pr$proximity_target), 1)
 })
 
 test_that("proximity returns source proximity only", {
@@ -23,10 +23,10 @@ test_that("proximity returns source proximity only", {
   )
 
   expect_is(pr, "list")
-  expect_equal(nrow(pr$proximity_source), 21)
+  expect_equal(nrow(pr$proximity_source), 9)
   expect_equal(nrow(pr$proximity_target), NULL)
-  expect_gte(min(pr$proximity_source$value), 0)
-  expect_lte(max(pr$proximity_source$value), 1)
+  expect_gte(min(pr$proximity_source), 0)
+  expect_lte(max(pr$proximity_source), 1)
 })
 
 test_that("proximity returns target proximity only", {
@@ -39,9 +39,9 @@ test_that("proximity returns target proximity only", {
 
   expect_is(pr, "list")
   expect_equal(nrow(pr$proximity_source), NULL)
-  expect_equal(nrow(pr$proximity_target), 40)
-  expect_gte(min(pr$proximity_target$value), 0)
-  expect_lte(max(pr$proximity_target$value), 1)
+  expect_equal(nrow(pr$proximity_target), 12)
+  expect_gte(min(pr$proximity_target), 0)
+  expect_lte(max(pr$proximity_target), 1)
 })
 
 test_that("proximity fails with NULL balassa_index", {

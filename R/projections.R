@@ -47,9 +47,9 @@ projections <- function(proximity_source, proximity_target,
                         source = "source", target = "target", value = "value",
                         avg_links = 4, tolerance = 0.05, compute = "both") {
   # sanity checks ----
-  if (!any(class(proximity_source) %in% "data.frame") |
-      !any(class(proximity_target) %in% "data.frame")) {
-    stop("'proximity_source' and 'proximity_target' must be data.frame")
+  if (class(proximity_source) != "dtCMatrix" |
+      class(proximity_target) != "dtCMatrix") {
+    stop("'proximity_source' and 'proximity_target' must be dtCMatrix")
   }
 
   if (!is.numeric(avg_links)) {
@@ -68,15 +68,18 @@ projections <- function(proximity_source, proximity_target,
 
   trim_network <- function(proximity_d, avg_d) {
     # compute network ----
-    proximity_d <- proximity_d %>%
-      dplyr::select(!!!syms(c(source, target, value))) %>%
-      dplyr::mutate(
-        source = as.character(!!sym(source)),
-        target = as.character(!!sym(target)),
-        value = -1 * as.numeric(!!sym(value))
-      )
+    proximity_d <- (-1) * proximity_d
 
-    proximity_g <- igraph::graph_from_data_frame(proximity_d, directed = FALSE)
+    proximity_d <- proximity_d %>%
+      as.matrix() %>%
+      as.table() %>%
+      as.data.frame(stringsAsFactors = FALSE)
+
+    names(proximity_d) <- c(source, target, value)
+
+    proximity_d <- filter(proximity_d, !!sym("value") != 0)
+
+    proximity_g <- igraph::graph_from_data_frame(proximity_d, directed =  FALSE)
 
     proximity_mst <- igraph::mst(proximity_g,
                                  weights = proximity_d$value,

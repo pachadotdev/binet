@@ -36,7 +36,7 @@ trade <- trade %>%
   mutate(trade_value_usd = trade_value_usd * conversion_factor)
 
 trade <- trade %>%
-  group_by(reporter_iso, partner_iso, product_code) %>%
+  group_by(reporter_iso, product_code) %>%
   summarise(trade_value_usd = sum(trade_value_usd, na.rm = T)) %>%
   mutate(trade_value_usd = round(trade_value_usd, 0))
 

@@ -12,20 +12,10 @@
 #' @param balassa_sum_target numeric vector or tibble/data.frame containing the
 #' Balassa sum for elements of set Y (e.g. \code{balassa_sum_target} from
 #' \code{complexity_measures()}).
-#' @param source a column with the elements of set X (applies only if data is
-#' a data frame).
-#' @param target a column with the elements of set Y (applies only if data is
-#' a data frame).
-#' @param value a column with some metric of the relation between the elements
-#' of X and Y (applies only if data is a data frame).
 #' @param compute which proximity to compute. By default is "both" (both
 #' proximities) but it can also be "source" or "target".
 #'
-#' @importFrom magrittr %>%
-#' @importFrom dplyr select filter mutate mutate_if
-#' @importFrom tibble as_tibble deframe
-#' @importFrom Matrix Matrix t rowSums colSums
-#' @importFrom rlang sym syms
+#' @importFrom Matrix t tril rowSums colSums
 #'
 #' @examples
 #' proximity(
@@ -45,16 +35,15 @@
 #'
 #' @export
 
-proximity <- function(balassa_index, balassa_sum_source, balassa_sum_target,
-                      source = "source", target = "target", value = "value", compute = "both") {
+proximity <- function(balassa_index, balassa_sum_source, balassa_sum_target, compute = "both") {
   # sanity checks ----
-  if (!any(class(balassa_index) %in% "data.frame")) {
-    stop("'balassa_index' must be a data.frame")
+  if (class(balassa_index) != "dgCMatrix") {
+    stop("'balassa_index' must be a dgCMatrix")
   }
 
-  if (all(class(balassa_sum_source) %in% c("numeric", "data.frame") == FALSE) |
-    all(class(balassa_sum_target) %in% c("numeric", "data.frame") == FALSE)) {
-    stop("'balassa_sum_source' and 'balassa_sum_target' must be data.frame or numeric")
+  if (class(balassa_sum_source) != "numeric" |
+    class(balassa_sum_target) != "numeric") {
+    stop("'balassa_sum_source' and 'balassa_sum_target' must be numeric")
   }
 
   if (is.numeric(balassa_sum_source) & is.null(names(balassa_sum_source))) {
@@ -69,31 +58,6 @@ proximity <- function(balassa_index, balassa_sum_source, balassa_sum_target,
     stop("'compute' must be 'both', 'source' or 'target'")
   }
 
-  # transformations for data frame inputs ----
-  balassa_index <- balassa_index %>%
-    dplyr::select(!!!syms(c(source, target, value))) %>%
-    dplyr::mutate(
-      source = as.factor(!!sym(source)),
-      target = as.factor(!!sym(target)),
-      value = as.numeric(!!sym(value))
-    )
-
-  balassa_index <- with(
-    balassa_index,
-    Matrix::sparseMatrix(
-      i = as.numeric(source),
-      j = as.numeric(target),
-      x = value,
-      dimnames = list(levels(source), levels(target))
-    )
-  )
-
-  balassa_index <- balassa_index[Matrix::rowSums(balassa_index) != 0, Matrix::colSums(balassa_index) != 0]
-
-  balassa_sum_source <- tibble::deframe(balassa_sum_source)
-
-  balassa_sum_target <- tibble::deframe(balassa_sum_target)
-
   # compute proximity matrices ----
 
   if (compute == "both") {
@@ -102,34 +66,21 @@ proximity <- function(balassa_index, balassa_sum_source, balassa_sum_target,
     compute2 <- compute
   }
 
-  if (!is.null(balassa_sum_source)) {
-    balassa_index <- balassa_index[rownames(balassa_index) %in% names(balassa_sum_source), ]
-  }
+  balassa_index <- balassa_index[Matrix::rowSums(balassa_index) != 0, Matrix::colSums(balassa_index) != 0]
 
-  if (!is.null(balassa_sum_target)) {
-    balassa_index <- balassa_index[, colnames(balassa_index) %in% names(balassa_sum_target)]
-  }
+  balassa_index <- balassa_index[rownames(balassa_index) %in% names(balassa_sum_source), ]
+  balassa_index <- balassa_index[ , colnames(balassa_index) %in% names(balassa_sum_target)]
 
   if (any("source" %in% compute2) == TRUE) {
     p1 <- balassa_index %*% Matrix::t(balassa_index)
 
     p2 <- outer(balassa_sum_source, balassa_sum_source, pmax)
 
-    prox_x <- p1 / p2
+    prox_x <- p1/p2
+    rm(p1, p2)
 
     prox_x[upper.tri(prox_x, diag = TRUE)] <- 0
-
-    prox_x <- prox_x %>%
-      as.matrix() %>%
-      as.table() %>%
-      as.data.frame()
-
-    names(prox_x) <- c("source", "target", "value")
-
-    prox_x <- prox_x %>%
-      tibble::as_tibble() %>%
-      dplyr::mutate_if(is.factor, as.character) %>%
-      dplyr::filter(!!sym("value") > 0)
+    prox_x <- Matrix::Matrix(prox_x, sparse = T)
   } else {
     prox_x <- NULL
   }
@@ -139,21 +90,11 @@ proximity <- function(balassa_index, balassa_sum_source, balassa_sum_target,
 
     p2 <- outer(balassa_sum_target, balassa_sum_target, pmax)
 
-    prox_y <- p1 / p2
+    prox_y <- p1/p2
+    rm(p1, p2)
 
     prox_y[upper.tri(prox_y, diag = TRUE)] <- 0
-
-    prox_y <- prox_y %>%
-      as.matrix() %>%
-      as.table() %>%
-      as.data.frame()
-
-    names(prox_y) <- c("source", "target", "value")
-
-    prox_y <- prox_y %>%
-      tibble::as_tibble() %>%
-      dplyr::mutate_if(is.factor, as.character) %>%
-      dplyr::filter(!!sym("value") > 0)
+    prox_y <- Matrix::Matrix(prox_y, sparse = T)
   } else {
     prox_y <- NULL
   }
