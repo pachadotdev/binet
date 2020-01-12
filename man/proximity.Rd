@@ -5,7 +5,6 @@
 \title{Proximity}
 \usage{
 proximity(balassa_index, balassa_sum_source, balassa_sum_target,
-  source = "source", target = "target", value = "value",
   compute = "both")
 }
 \arguments{
@@ -19,15 +18,6 @@ Balassa sum for elements of set X (e.g. \code{balassa_sum_source} from
 \item{balassa_sum_target}{numeric vector or tibble/data.frame containing the
 Balassa sum for elements of set Y (e.g. \code{balassa_sum_target} from
 \code{complexity_measures()}).}
-
-\item{source}{a column with the elements of set X (applies only if data is
-a data frame).}
-
-\item{target}{a column with the elements of set Y (applies only if data is
-a data frame).}
-
-\item{value}{a column with some metric of the relation between the elements
-of X and Y (applies only if data is a data frame).}
 
 \item{compute}{which proximity to compute. By default is "both" (both
 proximities) but it can also be "source" or "target".}
@@ -44,7 +34,6 @@ proximity(
   balassa_sum_source = binet_output$complexity_measures$balassa_sum_source,
   balassa_sum_target = binet_output$complexity_measures$balassa_sum_target
 )
-
 }
 \references{
 For more information see:

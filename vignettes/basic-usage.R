@@ -1,40 +1,12 @@
----
-title: "How to use this package"
-author: "Mauricio Vargas"
-date: "`r Sys.Date()`"
-output: rmarkdown::html_vignette
-bibliography: ../inst/REFERENCES.bib
-vignette: >
-  %\VignetteIndexEntry{How to use this package}
-  %\VignetteEngine{knitr::rmarkdown}
-  %\VignetteEncoding{UTF-8}
----
-
-```{r setup, cache = FALSE, echo = FALSE, message = FALSE, warning = FALSE}
+## ----setup, cache = FALSE, echo = FALSE, message = FALSE, warning = FALSE-----
 knitr::opts_chunk$set(eval = TRUE, message = FALSE, warning = FALSE)
-```
 
-# Galactic Federation
-
-This example is inspired after the visualizations from @atlas2014 but heavily
-inspired after Rick and Morty to keep it simple and lightweight.
-
-## Package data
-
-I'll use the Galactic Federation dataset to illustrate the essential usage of the functions
-within this package.
-
-```{r}
+## -----------------------------------------------------------------------------
 library(binet)
 
 galactic_federation
-```
 
-## Balassa Index
-
-You can obtain Balassa Index with `balassa_index()`.
-
-```{r}
+## -----------------------------------------------------------------------------
 bi <- balassa_index(
   data = galactic_federation,
   source = "planet",
@@ -43,11 +15,8 @@ bi <- balassa_index(
 )
 
 bi
-```
 
-Another possibility is to obtain Balassa Index without discretization.
-
-```{r}
+## -----------------------------------------------------------------------------
 bi_dec <- balassa_index(
   data =galactic_federation,
   source = "planet",
@@ -57,27 +26,14 @@ bi_dec <- balassa_index(
 )
 
 bi_dec
-```
 
-## Complexity Measures
-
-You can compute complexity indexes (e.g. such as the Economic Complexity Index and Product Complexity Index) by using `complexity_measures()`. The calculations methods are *fitness* (default), *reflections*, *eigenvalues*. See [@measuringcomplexity2015] for the methodological details.
-
-The eigenvalues also calls the reflections methods in order to correct the index sign
-in some special cases when the correlation between the output from both methods is negative.
-
-##  Complexity-Fitness
-
-```{r}
+## -----------------------------------------------------------------------------
 com_fit <- complexity_measures(balassa_index = bi)
 
 com_fit$complexity_index_source
 com_fit$complexity_index_target
-```
 
-## Reflections
-
-```{r}
+## -----------------------------------------------------------------------------
 com_ref <- complexity_measures(
   balassa_index = bi,
   method = "reflections"
@@ -85,11 +41,8 @@ com_ref <- complexity_measures(
 
 com_ref$complexity_index_source
 com_ref$complexity_index_target
-```
 
-## Eigenvalues
-
-```{r}
+## -----------------------------------------------------------------------------
 com_eig <- complexity_measures(
   balassa_index = bi,
   method = "eigenvalues"
@@ -97,14 +50,8 @@ com_eig <- complexity_measures(
 
 com_eig$complexity_index_source
 com_eig$complexity_index_target
-```
 
-## Proximity
-
-Proximity matrices are used to create projections e.g. (country-country and product-product
-networks) for bipartite networks. Using `proximity()` is straightforward.
-
-```{r}
+## -----------------------------------------------------------------------------
 pro <- proximity(
   balassa_index = bi,
   balassa_sum_source = com_fit$balassa_sum_source,
@@ -113,15 +60,8 @@ pro <- proximity(
 
 pro$proximity_source
 pro$proximity_target
-```
 
-## Networks
-
-The `projections()` function is designed to use `igraph` for the internal
-computations and also to pass proximity-based networks to `igraph`, `ggraph`
-or export to Cytoscape by saving the output as csv/tsv.
-
-```{r}
+## -----------------------------------------------------------------------------
 net <- projections(
   proximity_source = pro$proximity_source,
   proximity_target = pro$proximity_target,
@@ -131,10 +71,8 @@ net <- projections(
 
 net$network_source
 net$network_target
-```
 
-Just two basic examples with `ggraph`.
-```{r, fig.width=7, fig.height=7}
+## ---- fig.width=7, fig.height=7-----------------------------------------------
 set.seed(200100)
 library(igraph)
 library(ggraph)
@@ -151,11 +89,8 @@ net$network_source %>%
   geom_node_text(aes(label = name), vjust = 2.2) +
   ggtitle("Proximity Based Network Projection for Planets") +
   theme_void()
-```
 
-The network associated to
-
-```{r, fig.width=7, fig.height=7}
+## ---- fig.width=7, fig.height=7-----------------------------------------------
 set.seed(200100)
 
 aggregated_products <- aggregate(galactic_federation$export_value, by = list(product = galactic_federation$product), FUN = sum)
@@ -170,6 +105,4 @@ net$network_target %>%
   geom_node_text(aes(label = name), vjust = 2.2) +
   ggtitle("Proximity Based Network Projection for Products") +
   theme_void()
-```
 
-# References

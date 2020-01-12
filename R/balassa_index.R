@@ -12,9 +12,8 @@
 #'
 #' @return A data.frame with the Balassa Index.
 #'
-#' @param data (Type: data.frame) a demo datasets such as \code{trade}
-#' or \code{omim} from this package or any arrangement with a bipartite
-#' relation.
+#' @param data (Type: data.frame, matrix or dgCMatrix) a dataset such as \code{galactic_federation}
+#' or any arrangement.
 #' @param source (Type: character) the column with the elements of set X.
 #' By default this is set to \code{"source"}.
 #' @param target (Type: character) the column with the elements of set Y.
@@ -28,16 +27,15 @@
 #' @param cutoff (Type: numeric) the cutoff to use for discretization.
 #' By default this is set to \code{1}.
 #'
-#' @importFrom Matrix rowSums colSums t
+#' @importFrom Matrix Matrix rowSums colSums t
 #'
 #' @examples
 #' balassa_index(
-#'     data = galactic_federation,
-#'     source = "planet",
-#'     target = "product",
-#'     value = "export_value"
+#'   data = galactic_federation,
+#'   source = "planet",
+#'   target = "product",
+#'   value = "export_value"
 #' )
-#'
 #' @references
 #' For more information see:
 #'
@@ -52,8 +50,8 @@
 balassa_index <- function(data, source = "source", target = "target", value = "value",
                           discrete = TRUE, cutoff = 1) {
   # sanity checks ----
-  if (!any(class(data) %in% "data.frame")) {
-    stop("'data' must be a data.frame")
+  if (!any(class(data) %in% c("data.frame", "matrix", "dgCMatrix"))) {
+    stop("'data' must be a data.frame, matrix or dgCMatrix")
   }
 
   if (!is.character(source) | !is.character(target) | !is.character(value)) {
@@ -68,9 +66,14 @@ balassa_index <- function(data, source = "source", target = "target", value = "v
     stop("'cutoff' must be numeric")
   }
 
-  data <- source_target_aggregation(data, source, target, value)
+  if (any(class(data) %in% "data.frame")) {
+    data <- source_target_aggregation(data, source, target, value)
+    data <- dataframe_to_matrix(data, source, target, value)
+  }
 
-  data <- dataframe_to_matrix(data, source, target, value)
+  if (class(data) == "matrix") {
+    data <- Matrix(data, sparse = TRUE)
+  }
 
   data <- t(t(data / rowSums(data)) / (colSums(data) / sum(data)))
 

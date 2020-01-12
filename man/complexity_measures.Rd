@@ -4,23 +4,12 @@
 \alias{complexity_measures}
 \title{Complexity Measures}
 \usage{
-complexity_measures(balassa_index, source = "source",
-  target = "target", value = "value", method = "fitness",
-  iterations = 20, extremality = 1)
+complexity_measures(balassa_index, method = "fitness", iterations = 20,
+  extremality = 1)
 }
 \arguments{
-\item{balassa_index}{(Type: data.frame) the output from
+\item{balassa_index}{(Type: matrix or dgCMatrix) the output from
 \code{balassa_index()}) or an equivalent arrangement.}
-
-\item{source}{(Type: character) the column with the elements of set X.
-By default this is set to \code{"source"}.}
-
-\item{target}{(Type: character) the column with the elements of set Y.
-By default this is set to \code{"target"}.}
-
-\item{value}{(Type: character) the column with the binary expression for the
-Balassa Index.
-By default this is set to \code{"value"}.}
 
 \item{method}{(Type: character) one of these methods: fitness,
 reflections or eigenvalues. By default this is set to \code{"fitness"}.}

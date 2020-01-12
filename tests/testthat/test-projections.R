@@ -7,10 +7,8 @@ test_that("projection returns a simplified network with adecuate parameters", {
   )
 
   expect_is(net, "list")
-  expect_equal(nrow(net$network_source), 21)
-  expect_equal(nrow(net$network_target), 40)
-  expect_equal(ncol(net$network_source), 3)
-  expect_equal(ncol(net$network_target), 3)
+  expect_equal(length(E(net$network_source)), 21)
+  expect_equal(length(E(net$network_target)), 40)
 })
 
 test_that("projection returns the spanning tree with extreme parameters", {
@@ -24,10 +22,8 @@ test_that("projection returns the spanning tree with extreme parameters", {
   )
 
   expect_is(net, "list")
-  expect_equal(nrow(net$network_source), 8)
-  expect_equal(nrow(net$network_target), 11)
-  expect_equal(ncol(net$network_source), 3)
-  expect_equal(ncol(net$network_target), 3)
+  expect_equal(length(E(net$network_source)), 8)
+  expect_equal(length(E(net$network_target)), 11)
 })
 
 test_that("projection returns source projection only", {
@@ -43,10 +39,8 @@ test_that("projection returns source projection only", {
   )
 
   expect_is(net, "list")
-  expect_equal(nrow(net$network_source), 8)
-  expect_equal(nrow(net$network_target), NULL)
-  expect_equal(ncol(net$network_source), 3)
-  expect_equal(ncol(net$network_target), NULL)
+  expect_equal(length(E(net$network_source)), 8)
+  expect_equal(net$network_target, NULL)
 })
 
 test_that("projection returns target projection only", {
@@ -62,10 +56,8 @@ test_that("projection returns target projection only", {
   )
 
   expect_is(net, "list")
-  expect_equal(nrow(net$network_source), NULL)
-  expect_equal(nrow(net$network_target), 11)
-  expect_equal(ncol(net$network_source), NULL)
-  expect_equal(ncol(net$network_target), 3)
+  expect_equal(net$network_source, NULL)
+  expect_equal(length(E(net$network_target)), 11)
 })
 
 test_that("projection fails with proximity_source/proximity_target", {

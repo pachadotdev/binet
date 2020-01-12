@@ -13,7 +13,7 @@
 #' ordering rankings for specialization and two aggregations (sums) of
 #' the Balassa Index.
 #'
-#' @param balassa_index (Type: matrix) the output from
+#' @param balassa_index (Type: matrix or dgCMatrix) the output from
 #' \code{balassa_index()}) or an equivalent arrangement.
 #' @param method (Type: character) one of these methods: fitness,
 #' reflections or eigenvalues. By default this is set to \code{"fitness"}.
@@ -24,6 +24,7 @@
 #' By default this is set to \code{1}.
 #'
 #' @importFrom Matrix Matrix rowSums colSums t
+#' @importFrom stats sd cor
 #'
 #' @examples
 #' complexity_measures(balassa_index = binet_output$balassa_index)
@@ -59,19 +60,19 @@ complexity_measures <- function(balassa_index, method = "fitness", iterations = 
 
   # compute complexity measures ----
   # balassa_sum_x (kx0) and balassa_sum_y (ky0)
-  kx0 <- Matrix::rowSums(balassa_index)
-  ky0 <- Matrix::colSums(balassa_index)
+  kx0 <- rowSums(balassa_index)
+  ky0 <- colSums(balassa_index)
 
   # reflections is defined as a function as these steps are also used for
   # eigenvalues method
   reflections <- function() {
     # create empty matrices
-    kx <- Matrix::Matrix(0,
+    kx <- Matrix(0,
                          nrow = length(kx0), ncol = iterations,
                          sparse = TRUE
     )
 
-    ky <- Matrix::Matrix(0,
+    ky <- Matrix(0,
                          nrow = length(ky0), ncol = iterations,
                          sparse = TRUE
     )
@@ -113,40 +114,40 @@ complexity_measures <- function(balassa_index, method = "fitness", iterations = 
     yci_r <- reflections_output$yci
 
     # compute eigenvalues for xci
-    xci <- eigen((balassa_index %*% (Matrix::t(balassa_index) * (1 / ky0))) * (1 / kx0))
+    xci <- eigen((balassa_index %*% (t(balassa_index) * (1 / ky0))) * (1 / kx0))
     xci <- Re(xci$vectors[, 2])
 
     # normalized xci
-    xci <- (xci - base::mean(xci)) / stats::sd(xci)
+    xci <- (xci - mean(xci)) / sd(xci)
     names(xci) <- rownames(balassa_index)
 
     # correct xci sign when required
-    if (isTRUE(stats::cor(xci, xci_r, use = "pairwise.complete.obs") < 0)) {
+    if (isTRUE(cor(xci, xci_r, use = "pairwise.complete.obs") < 0)) {
       xci <- (-1) * xci
     }
 
     # compute eigenvalues for yci
-    yci <- eigen((Matrix::t(balassa_index) %*% (balassa_index * (1 / kx0))) * (1 / ky0))
+    yci <- eigen((t(balassa_index) %*% (balassa_index * (1 / kx0))) * (1 / ky0))
     yci <- Re(yci$vectors[, 2])
 
     # normalized yci
-    yci <- (yci - base::mean(yci)) / stats::sd(yci)
+    yci <- (yci - mean(yci)) / sd(yci)
     names(yci) <- colnames(balassa_index)
 
     # correct yci sign when required
-    if (isTRUE(stats::cor(yci, yci_r, use = "pairwise.complete.obs") < 0)) {
+    if (isTRUE(cor(yci, yci_r, use = "pairwise.complete.obs") < 0)) {
       yci <- (-1) * yci
     }
   }
 
   if (method == "fitness") {
     # create empty matrices
-    kx <- Matrix::Matrix(0,
+    kx <- Matrix(0,
                          nrow = length(kx0), ncol = iterations,
                          sparse = TRUE
     )
 
-    ky <- Matrix::Matrix(0,
+    ky <- Matrix(0,
                          nrow = length(ky0), ncol = iterations,
                          sparse = TRUE
     )
@@ -161,7 +162,7 @@ complexity_measures <- function(balassa_index, method = "fitness", iterations = 
 
       kx[, j] <- kx[, j] / mean(kx[, j])
 
-      ky[, j] <- 1 / (Matrix::t(balassa_index) %*%
+      ky[, j] <- 1 / (t(balassa_index) %*%
                         (1 / kx[, (j - 1)])^extremality)^(1 / extremality)
 
       ky[, j] <- ky[, j] / mean(ky[, j])

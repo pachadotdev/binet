@@ -8,12 +8,6 @@
 #' values for the elements of set X (e.g. proximity_source from \code{proximity()})
 #' @param proximity_target a data frame containing proximity
 #' values for the elements of set Y (e.g. proximity_target from \code{proximity()})
-#' @param source a column with the elements of set X (applies only if data is
-#' a data frame).
-#' @param target a column with the elements of set Y (applies only if data is
-#' a data frame).
-#' @param value a column with the proximity values between the elements
-#' of X or Y (applies only if data is a data frame).
 #' @param avg_links average number of connections for the projection of X
 #' (default set to 4)
 #' @param tolerance tolerance for proximity variation on each iteration until
@@ -21,17 +15,13 @@
 #' @param compute which projection to compute. By default is "both" (both
 #' projections) but it can also be "source" or "target".
 #'
-#' @importFrom magrittr %>%
-#' @importFrom dplyr as_tibble filter mutate bind_rows rename
-#' @importFrom igraph graph_from_data_frame mst as_data_frame simplify degree
-#' @importFrom rlang sym syms
+#' @importFrom igraph graph_from_adjacency_matrix graph_from_data_frame mst as_data_frame degree delete.edges graph.difference E E<-
 #'
 #' @examples
 #' projections(
 #'   proximity_source = binet_output$proximity$proximity_source,
 #'   proximity_target = binet_output$proximity$proximity_target
 #' )
-#'
 #' @references
 #' For more information see:
 #'
@@ -44,11 +34,10 @@
 #' @export
 
 projections <- function(proximity_source, proximity_target,
-                        source = "source", target = "target", value = "value",
                         avg_links = 4, tolerance = 0.05, compute = "both") {
   # sanity checks ----
-  if (class(proximity_source) != "dtCMatrix" |
-      class(proximity_target) != "dtCMatrix") {
+  if (class(proximity_source) != "dsCMatrix" |
+    class(proximity_target) != "dsCMatrix") {
     stop("'proximity_source' and 'proximity_target' must be dtCMatrix")
   }
 
@@ -70,61 +59,40 @@ projections <- function(proximity_source, proximity_target,
     # compute network ----
     proximity_d <- (-1) * proximity_d
 
-    proximity_d <- proximity_d %>%
-      as.matrix() %>%
-      as.table() %>%
-      as.data.frame(stringsAsFactors = FALSE)
+    proximity_g <- graph_from_adjacency_matrix(proximity_d, weighted = TRUE, mode = "undirected", diag = FALSE)
 
-    names(proximity_d) <- c(source, target, value)
-
-    proximity_d <- filter(proximity_d, !!sym("value") != 0)
-
-    proximity_g <- igraph::graph_from_data_frame(proximity_d, directed =  FALSE)
-
-    proximity_mst <- igraph::mst(proximity_g,
-                                 weights = proximity_d$value,
-                                 algorithm = "prim"
-    )
-
-    proximity_mst <- igraph::as_data_frame(proximity_mst)
-    names(proximity_mst) <- c(source, target, value)
+    proximity_mst <- mst(proximity_g, algorithm = "prim")
 
     threshold <- 0
     avg_links_n <- FALSE
 
-    while(avg_links_n == FALSE) {
-      if (threshold <= -1) {
-        warning("no threshold achieves the avg number of connections\nreturning maximum spanning tree")
-        proximity_g <- dplyr::mutate(proximity_mst, value = -1 * !!sym(value))
-        proximity_g <- igraph::graph_from_data_frame(proximity_g, directed = FALSE)
-        avg_links_n <- TRUE
+    while (avg_links_n == FALSE) {
+      if (threshold < 1) {
+        message(sprintf("%s threshold...", threshold))
 
-        return(proximity_g)
-      } else {
-        message(sprintf("%s threshold...", -1 * threshold))
+        proximity_g_nmst <- delete.edges(proximity_g, which(abs(E(proximity_g)$weight) <= threshold))
+        proximity_g_nmst <- graph.difference(proximity_g_nmst, proximity_mst)
 
-        proximity_g_nmst <- proximity_d %>%
-          dplyr::filter(!!sym(value) <= threshold) %>%
-          dplyr::anti_join(proximity_mst, by = c("source", "target"))
-
-        proximity_g <- dplyr::bind_rows(proximity_mst, proximity_g_nmst)
-        proximity_g <- dplyr::mutate(proximity_g, value = -1 * !!sym(value))
-
-        proximity_g <- igraph::graph_from_data_frame(proximity_g, directed = FALSE)
-
-        proximity_g <- igraph::simplify(proximity_g,
-                                        remove.multiple = TRUE, remove.loops = TRUE,
-                                        edge.attr.comb = "first"
+        proximity_g <- rbind(
+          as_data_frame(proximity_mst),
+          as_data_frame(proximity_g_nmst)
         )
 
-        avg_links <- mean(igraph::degree(proximity_g))
-        avg_links_n <- ifelse(avg_links <= avg_d, TRUE, FALSE)
-        threshold <- threshold - tolerance
+        proximity_g <- graph_from_data_frame(proximity_g, directed = F)
+
+        avg_links_n <- ifelse(mean(degree(proximity_g)) <= avg_d, TRUE, FALSE)
+        threshold <- threshold + tolerance
 
         if (avg_links_n == TRUE) {
-          message(sprintf("%s threshold achieves the avg number of connections", -1 * threshold))
+          message(sprintf("%s threshold achieves the avg number of connections", threshold))
+          E(proximity_g)$weight <- (-1) * E(proximity_g)$weight
           return(proximity_g)
         }
+      } else {
+        warning("no threshold achieves the avg number of connections\nreturning maximum spanning tree")
+        avg_links_n <- TRUE
+        E(proximity_mst)$weight <- (-1) * E(proximity_mst)$weight
+        return(proximity_mst)
       }
     }
   }
@@ -133,9 +101,6 @@ projections <- function(proximity_source, proximity_target,
     message("computing target projection...")
     message(rep("-", 50))
     xg <- trim_network(proximity_source, avg_links)
-    xg <- igraph::as_data_frame(xg) %>%
-      dplyr::as_tibble() %>%
-      dplyr::rename(source = !!sym("from"), target = !!sym("to"))
   } else {
     xg <- NULL
   }
@@ -144,9 +109,6 @@ projections <- function(proximity_source, proximity_target,
     message("computing target projection...")
     message(rep("-", 50))
     yg <- trim_network(proximity_target, avg_links)
-    yg <- igraph::as_data_frame(yg) %>%
-      dplyr::as_tibble() %>%
-      dplyr::rename(source = !!sym("from"), target = !!sym("to"))
   } else {
     yg <- NULL
   }

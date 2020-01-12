@@ -23,7 +23,6 @@
 #'   balassa_sum_source = binet_output$complexity_measures$balassa_sum_source,
 #'   balassa_sum_target = binet_output$complexity_measures$balassa_sum_target
 #' )
-#'
 #' @references
 #' For more information see:
 #'
@@ -66,35 +65,21 @@ proximity <- function(balassa_index, balassa_sum_source, balassa_sum_target, com
     compute2 <- compute
   }
 
-  balassa_index <- balassa_index[Matrix::rowSums(balassa_index) != 0, Matrix::colSums(balassa_index) != 0]
+  balassa_index <- balassa_index[rowSums(balassa_index) != 0, colSums(balassa_index) != 0]
 
   balassa_index <- balassa_index[rownames(balassa_index) %in% names(balassa_sum_source), ]
-  balassa_index <- balassa_index[ , colnames(balassa_index) %in% names(balassa_sum_target)]
+  balassa_index <- balassa_index[, colnames(balassa_index) %in% names(balassa_sum_target)]
 
   if (any("source" %in% compute2) == TRUE) {
-    p1 <- balassa_index %*% Matrix::t(balassa_index)
-
-    p2 <- outer(balassa_sum_source, balassa_sum_source, pmax)
-
-    prox_x <- p1/p2
-    rm(p1, p2)
-
-    prox_x[upper.tri(prox_x, diag = TRUE)] <- 0
-    prox_x <- Matrix::Matrix(prox_x, sparse = T)
+    prox_x <- (balassa_index %*% t(balassa_index)) / outer(balassa_sum_source, balassa_sum_source, pmax)
+    prox_x <- Matrix(prox_x, sparse = T)
   } else {
     prox_x <- NULL
   }
 
   if (any("target" %in% compute2) == TRUE) {
-    p1 <- Matrix::t(balassa_index) %*% balassa_index
-
-    p2 <- outer(balassa_sum_target, balassa_sum_target, pmax)
-
-    prox_y <- p1/p2
-    rm(p1, p2)
-
-    prox_y[upper.tri(prox_y, diag = TRUE)] <- 0
-    prox_y <- Matrix::Matrix(prox_y, sparse = T)
+    prox_y <- (t(balassa_index) %*% balassa_index) / outer(balassa_sum_target, balassa_sum_target, pmax)
+    prox_y <- Matrix(prox_y, sparse = T)
   } else {
     prox_y <- NULL
   }

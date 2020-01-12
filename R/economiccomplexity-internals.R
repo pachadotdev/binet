@@ -2,21 +2,21 @@
 #' @importFrom magrittr %>%
 #' @importFrom dplyr select group_by summarise ungroup filter mutate
 #' @importFrom rlang sym syms :=
+#' @importFrom stats aggregate
 #' @keywords internal
 source_target_aggregation <- function(dataframe, source = "source", target = "target", value = "value") {
-  return(
-    dataframe %>%
-      select(!!!syms(c(source, target, value))) %>%
-      group_by(!!!syms(c(source, target))) %>%
-      summarise(!!sym(value) := sum(!!sym(value), na.rm = TRUE)) %>%
-      ungroup() %>%
-      filter(!!sym("value") > 0) %>%
-      mutate(
-        source = as.factor(!!sym(source)),
-        target = as.factor(!!sym(target)),
-        value = as.numeric(!!sym(value))
-      )
-  )
+  dataframe <- subset(dataframe, select = c(source, target, value))
+  names(dataframe) <- c("source", "target", "value")
+
+  dataframe <- aggregate(dataframe$value, by = list(source = dataframe$source, target = dataframe$target), FUN = sum)
+  names(dataframe) <- c("source", "target", "value")
+
+  dataframe <- dataframe[dataframe$value > 0, ]
+
+  dataframe$source <- as.factor(dataframe$source)
+  dataframe$target <- as.factor(dataframe$target)
+
+  return(dataframe)
 }
 
 #' Dataframe to matrix

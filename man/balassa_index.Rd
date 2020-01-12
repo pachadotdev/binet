@@ -8,9 +8,8 @@ balassa_index(data, source = "source", target = "target",
   value = "value", discrete = TRUE, cutoff = 1)
 }
 \arguments{
-\item{data}{(Type: data.frame) a demo datasets such as \code{trade}
-or \code{omim} from this package or any arrangement with a bipartite
-relation.}
+\item{data}{(Type: data.frame, matrix or dgCMatrix) a dataset such as \code{galactic_federation}
+or any arrangement.}
 
 \item{source}{(Type: character) the column with the elements of set X.
 By default this is set to \code{"source"}.}
@@ -46,12 +45,11 @@ specialized in that product.
 }
 \examples{
 balassa_index(
-    data = galactic_federation,
-    source = "planet",
-    target = "product",
-    value = "export_value"
+  data = galactic_federation,
+  source = "planet",
+  target = "product",
+  value = "export_value"
 )
-
 }
 \references{
 For more information see:

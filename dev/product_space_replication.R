@@ -1,8 +1,6 @@
 library(binet)
-library(igraph)
-library(ggraph)
-library(tibble)
-library(dplyr)
+
+trade <- readRDS("~/github/binet/dev/world_trade_avg_1998_to_2000.rds")
 
 bi <- balassa_index(
   data = trade,

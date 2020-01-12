@@ -4,8 +4,7 @@
 \alias{projections}
 \title{Projections of a bipartite network}
 \usage{
-projections(proximity_source, proximity_target, source = "source",
-  target = "target", value = "value", avg_links = 4,
+projections(proximity_source, proximity_target, avg_links = 4,
   tolerance = 0.05, compute = "both")
 }
 \arguments{
@@ -14,15 +13,6 @@ values for the elements of set X (e.g. proximity_source from \code{proximity()})
 
 \item{proximity_target}{a data frame containing proximity
 values for the elements of set Y (e.g. proximity_target from \code{proximity()})}
-
-\item{source}{a column with the elements of set X (applies only if data is
-a data frame).}
-
-\item{target}{a column with the elements of set Y (applies only if data is
-a data frame).}
-
-\item{value}{a column with the proximity values between the elements
-of X or Y (applies only if data is a data frame).}
 
 \item{avg_links}{average number of connections for the projection of X
 (default set to 4)}
@@ -44,7 +34,6 @@ projections(
   proximity_source = binet_output$proximity$proximity_source,
   proximity_target = binet_output$proximity$proximity_target
 )
-
 }
 \references{
 For more information see:
