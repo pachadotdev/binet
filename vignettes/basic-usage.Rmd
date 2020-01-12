@@ -136,13 +136,12 @@ net$network_target
 Just two basic examples with `ggraph`.
 ```{r, fig.width=7, fig.height=7}
 set.seed(200100)
+library(Matrix)
 library(igraph)
 library(ggraph)
 
-aggregated_planets <- aggregate(galactic_federation$export_value, by = list(planet = galactic_federation$planet), FUN = sum)
-aggregated_planets_2 <- aggregated_planets$x
-names(aggregated_planets_2) <- aggregated_planets$planet
-V(net$network_source)$size <- aggregated_planets_2[match(V(net$network_source)$name, names(aggregated_planets_2))]
+aggregated_planets <- rowSums(galactic_federation)
+V(net$network_source)$size <- aggregated_planets[match(V(net$network_source)$name, names(aggregated_planets))]
 
 net$network_source %>% 
   ggraph(layout = "kk") +
@@ -158,10 +157,8 @@ The network associated to
 ```{r, fig.width=7, fig.height=7}
 set.seed(200100)
 
-aggregated_products <- aggregate(galactic_federation$export_value, by = list(product = galactic_federation$product), FUN = sum)
-aggregated_products_2 <- aggregated_products$x
-names(aggregated_products_2) <- aggregated_products$product
-V(net$network_target)$size <- aggregated_products_2[match(V(net$network_target)$name, names(aggregated_products_2))]
+aggregated_products <- colSums(galactic_federation)
+V(net$network_target)$size <- aggregated_products[match(V(net$network_target)$name, names(aggregated_products))]
 
 net$network_target %>% 
   ggraph(layout = "kk") +

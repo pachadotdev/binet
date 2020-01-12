@@ -1,7 +1,4 @@
 #' Source-target aggregation
-#' @importFrom magrittr %>%
-#' @importFrom dplyr select group_by summarise ungroup filter mutate
-#' @importFrom rlang sym syms :=
 #' @importFrom stats aggregate
 #' @keywords internal
 source_target_aggregation <- function(dataframe, source = "source", target = "target", value = "value") {

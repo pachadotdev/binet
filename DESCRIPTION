@@ -23,12 +23,8 @@ Encoding: UTF-8
 LazyData: true
 Depends: R (>= 3.5)
 Imports:
-    magrittr,
-    tibble,
-    dplyr,
     Matrix, 
     igraph,
-    rlang
 Suggests: 
     testthat (>= 2.1.0),
     knitr,
